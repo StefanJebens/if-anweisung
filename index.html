@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Informatik EF – Studientag (Tag der offenen Tür, 28.11.2026): Die if-Anweisung</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232a55c9'/%3E%3Ctext x='32' y='43' font-family='monospace' font-size='30' font-weight='700' text-anchor='middle' fill='white'%3Eif%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f3f5fa;
+  --card: #ffffff;
+  --ink: #1b2233;
+  --muted: #5d6679;
+  --line: #e1e6ef;
+  --accent: #2a55c9;
+  --accent-soft: #e8eefc;
+  --ok: #17824f;
+  --ok-bg: #e6f5ec;
+  --bad: #c2362f;
+  --bad-bg: #fcebea;
+  --sem: #b4610a;
+  --sem-bg: #fff1df;
+  --info-bg: #eef2f8;
+  --merke-bg: #eef4ff;
+  --merke-line: #2a55c9;
+  --achtung-bg: #fff6e6;
+  --achtung-line: #d98a00;
+  --code-bg: #f8f9fc;
+  --gutter: #eef1f6;
+  --fixed-bg: #f1f3f8;
+  --fixed-ink: #6b7488;
+  --t-kw: #7a2bb5;
+  --t-ty: #1d5fbf;
+  --t-num: #a15c00;
+  --t-str: #12805c;
+  --t-com: #8a93a6;
+  --radius: 14px;
+  --mono: "Cascadia Mono", "JetBrains Mono", Consolas, "SF Mono", Menlo, "DejaVu Sans Mono", "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 76px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+code, kbd, pre, input.eline, input.einline { font-family: var(--mono); }
+.prose code, .q-prompt code, .box code, .feedback code, .teacher-sol code {
+  font-size: 0.9em;
+  background: #eef1f7;
+  border: 1px solid #e2e7f0;
+  border-radius: 5px;
+  padding: 0.05em 0.35em;
+  white-space: nowrap;
+}
+kbd {
+  font-size: 0.82em;
+  background: #fff;
+  border: 1px solid #cfd6e3;
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0.05em 0.4em;
+}
+
+/* ---------- Kopfleiste ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  max-width: 900px; margin: 0 auto; padding: 10px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.tb-title { font-weight: 700; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.tb-teacher {
+  font-size: 13px; font-weight: 700; color: #7a4a00; background: #ffe9c2;
+  border-radius: 999px; padding: 2px 10px;
+}
+.tb-progress { margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 300px; }
+.tb-bar { flex: 1; height: 8px; background: #e4e8f0; border-radius: 999px; overflow: hidden; }
+.tb-fill { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #4f7cf0); border-radius: 999px; transition: width .4s ease; }
+.tb-count { font-size: 14px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- Seite ---------- */
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
+.hero { padding: 42px 0 18px; }
+.kicker {
+  margin: 0 0 6px; font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--accent);
+}
+.hero h1 { margin: 0 0 12px; font-size: clamp(32px, 5vw, 46px); line-height: 1.1; letter-spacing: -0.02em; }
+.hero h1::after { content: " { … }"; color: #b8c3da; font-family: var(--mono); font-weight: 500; font-size: 0.6em; letter-spacing: 0; }
+.lead { margin: 0; max-width: 62ch; color: var(--muted); font-size: 18px; }
+.teacher-note { margin: 16px 0 0; padding: 10px 14px; background: #fff3dc; border: 1px solid #f2d39a; border-radius: 10px; font-size: 15px; }
+
+.part { margin-top: 34px; }
+.part-title {
+  font-size: 22px; margin: 0 0 14px; display: flex; align-items: baseline; gap: 12px;
+}
+.part-title span {
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  color: #fff; background: var(--ink); border-radius: 6px; padding: 2px 8px; position: relative; top: -2px;
+}
+
+/* ---------- Karten ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(20, 30, 60, .04), 0 6px 20px rgba(20, 30, 60, .05);
+  margin: 0 0 18px;
+  overflow: hidden;
+}
+.card-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; padding: 18px 24px 0; }
+.card-tag { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.card-title { margin: 0; font-size: 21px; flex-basis: 100%; order: 3; }
+.chip { font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 1px 9px; }
+.chip-code { background: var(--accent-soft); color: var(--accent); }
+.chip-read { background: #efe8fb; color: #6a35b0; }
+.card-status { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--muted); }
+.card.solved .card-status { color: var(--ok); }
+.card-body { padding: 10px 24px 22px; }
+.card.locked { background: transparent; box-shadow: none; border-style: dashed; }
+.card.locked .card-head { padding-bottom: 16px; opacity: .6; }
+.card.locked .card-title { font-size: 17px; }
+.card.solved { border-color: #cfe9da; }
+.card.final { border: 2px solid var(--accent); }
+
+.prose p { margin: 10px 0; }
+.prose ul, .prose ol, .box ul, .box ol { margin: 8px 0; padding-left: 1.3em; }
+.prose li, .box li { margin: 4px 0; }
+.prose h4 { margin: 18px 0 4px; font-size: 17px; }
+
+/* ---------- Tabellen ---------- */
+table.ops { border-collapse: collapse; margin: 12px 0; font-size: 16px; min-width: min(100%, 520px); }
+table.ops th, table.ops td { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--line); }
+table.ops th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+table.ops tr.hl td { background: #fff8e8; }
+table.ops tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--achtung-line); padding-left: 8px; }
+
+/* ---------- Boxen ---------- */
+.box { border-radius: 12px; padding: 12px 18px; margin: 14px 0; border-left: 4px solid; }
+.box p { margin: 6px 0; }
+.box-title { font-weight: 700; margin-top: 2px !important; }
+.box.merke { background: var(--merke-bg); border-color: var(--merke-line); }
+.box.achtung { background: var(--achtung-bg); border-color: var(--achtung-line); }
+.box.help { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--accent); }
+.box.tip { background: #f2fbf6; border-color: var(--ok); }
+
+/* ---------- Codeblöcke ---------- */
+.codeblock {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  margin: 12px 0; padding: 8px 0; overflow-x: auto; font-size: 15px; line-height: 1.6;
+}
+.codeblock code { display: block; min-width: max-content; }
+.cl { display: block; padding-right: 16px; }
+.cln { display: inline-block; width: 3em; padding-right: 1em; text-align: right; color: #a4adbf; user-select: none; }
+.clt { white-space: pre; }
+.t-kw { color: var(--t-kw); font-weight: 600; }
+.t-ty { color: var(--t-ty); font-weight: 600; }
+.t-lit { color: var(--t-kw); }
+.t-num { color: var(--t-num); }
+.t-str { color: var(--t-str); }
+.t-com { color: var(--t-com); font-style: italic; }
+.t-ph { font-family: var(--sans); font-style: italic; color: #4a5568; background: #e9edf5; border-radius: 4px; padding: 0 5px; }
+
+/* ---------- Editor ---------- */
+.editor {
+  border: 1px solid #cfd7e6; border-radius: 10px; overflow-x: auto; overflow-y: hidden; background: #fff;
+  margin: 16px 0 12px; font-size: 15px;
+}
+.editor-in { display: inline-block; min-width: 100%; vertical-align: top; }
+.erow { display: flex; align-items: stretch; min-height: 30px; border-bottom: 1px solid #f0f2f7; position: relative; }
+.erow:last-child { border-bottom: 0; }
+.eln {
+  flex: 0 0 3.2em; text-align: right; padding: 4px 8px 0 0; color: #98a2b6; background: var(--gutter);
+  font: 13px/22px var(--mono); user-select: none; font-variant-numeric: tabular-nums;
+}
+.emark { flex: 0 0 22px; text-align: center; font-weight: 800; color: var(--bad); background: var(--gutter); line-height: 30px; font-size: 15px; }
+.esrc { white-space: pre; font-family: var(--mono); line-height: 30px; padding: 0; }
+.erow.fixed { background: var(--fixed-bg); }
+.erow.fixed .esrc { color: var(--fixed-ink); padding-left: 10px; }
+.erow.fixed .esrc span { opacity: .85; }
+.erow.inline { background: var(--fixed-bg); }
+.erow.inline > .esrc, .erow.inline > input.einline { align-self: center; }
+.erow.inline > .esrc:first-of-type { padding-left: 10px; }
+.erow.inline .esrc { color: var(--fixed-ink); }
+input.eline, input.einline {
+  font-size: 15px; color: var(--ink); background: #fff; border: 0; outline: none; margin: 0;
+  line-height: 30px; height: 30px; white-space: pre;
+}
+input.eline { flex: 1; min-width: 22ch; padding: 0 10px; }
+input.einline {
+  padding: 0 6px; height: 26px; line-height: 26px; border: 1.5px solid #9fb2db; border-radius: 6px;
+  background: #fff; margin: 0 2px; min-width: 10ch;
+}
+.erow.edit { background: #fff; }
+.erow.edit:focus-within { background: #f6f9ff; box-shadow: inset 3px 0 0 var(--accent); }
+input.einline:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42, 85, 201, .15); }
+.erow.err-syn, .erow.err-syn input.eline { background: var(--bad-bg); }
+.erow.err-sem:not(.err-syn), .erow.err-sem:not(.err-syn) input.eline { background: var(--sem-bg); }
+.erow.err-sem:not(.err-syn) .emark { color: var(--sem); }
+.erow.err-syn .eln, .erow.err-sem .eln { color: var(--bad); font-weight: 700; }
+.erow.err-syn input.einline { border-color: var(--bad); }
+.erow.err-sem:not(.err-syn) input.einline { border-color: var(--sem); }
+.editor.readonly input.eline, .editor.readonly input.einline { color: #2c3a52; }
+.editor.readonly .erow.edit { background: #fbfcfe; }
+.editor.readonly input.einline { border-style: dashed; border-color: #c3cbdb; }
+
+/* ---------- Fragen ---------- */
+.quiz { margin-top: 18px; padding-top: 14px; border-top: 1px dashed #d6dce8; }
+.quiz-title { margin: 0 0 6px; font-size: 16px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.qgroup + .qgroup { margin-top: 14px; }
+.qlabel { font-weight: 800; font-size: 18px; margin: 6px 0 -4px; }
+.q { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 10px 0; padding: 8px 12px; border-radius: 10px; border: 1px solid transparent; }
+.q-choice { display: block; }
+.q-prompt { font-weight: 600; }
+.q-arrow { color: var(--muted); }
+input.answer {
+  font: 16px var(--mono); width: 9ch; padding: 6px 10px; border: 1.5px solid #c3cddf; border-radius: 8px; background: #fff;
+}
+input.answer:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42, 85, 201, .15); }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 8px; }
+.choice {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1.5px solid #d4dbe8; border-radius: 10px;
+  cursor: pointer; background: #fff;
+}
+.choice:hover { border-color: #9fb2db; }
+.choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.choice code { font-size: 15px; white-space: pre; }
+.q-state { font-weight: 800; }
+.q.ok { background: var(--ok-bg); border-color: #bfe3cf; }
+.q.ok .q-state::after { content: "✓"; color: var(--ok); }
+.q.ok input.answer { border-color: var(--ok); }
+.q.bad { background: var(--bad-bg); border-color: #f2c4c0; }
+.q.bad .q-state::after { content: "✗"; color: var(--bad); }
+.q.bad input.answer { border-color: var(--bad); }
+.q-choice .q-state { display: none; }
+
+/* ---------- Knöpfe, Rückmeldung ---------- */
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.btn {
+  font: 600 16px var(--sans); border-radius: 10px; padding: 9px 18px; cursor: pointer; border: 1.5px solid transparent;
+}
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { background: #2148ad; }
+.btn.ghost { background: #fff; color: var(--ink); border-color: #cdd5e3; }
+.btn.ghost:hover { border-color: #9fb2db; }
+.btn.small { font-size: 14px; padding: 6px 12px; }
+.btn.next { background: var(--ok); color: #fff; margin-left: 6px; font-size: 15px; padding: 6px 14px; }
+.btn:focus-visible { outline: 3px solid rgba(42, 85, 201, .35); outline-offset: 2px; }
+.hint { font-size: 13.5px; color: var(--muted); }
+.feedback { display: none; margin-top: 12px; padding: 11px 16px; border-radius: 10px; line-height: 1.55; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--ok-bg); color: #0f5a36; border: 1px solid #bfe3cf; }
+.feedback.bad { background: var(--bad-bg); color: #7d1f1a; border: 1px solid #f2c4c0; }
+.feedback.info { background: var(--info-bg); color: #33405a; border: 1px solid #d9e0ec; }
+.fb-icon { font-weight: 900; }
+.fb-note { font-size: 14px; opacity: .85; }
+.fb-details { margin-top: 8px; font-size: 14px; }
+.fb-details summary { cursor: pointer; }
+.teacher-sol { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: #fff8e8; border: 1px dashed #e9c47c; }
+.teacher-sol p { margin: 4px 0; }
+
+.congrats {
+  padding: 16px 20px; margin-bottom: 16px; border-radius: var(--radius);
+  background: linear-gradient(120deg, #e6f5ec, #e8eefc); border: 1px solid #cde5d8; font-weight: 600;
+}
+
+.footer {
+  max-width: 900px; margin: 0 auto; padding: 18px 20px 40px; color: var(--muted); font-size: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+}
+.footer p { margin: 0; }
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .card-head, .card-body { padding-left: 16px; padding-right: 16px; }
+  .tb-title { display: none; }
+  .tb-progress { flex: 1; }
+  .editor, .codeblock { font-size: 13.5px; }
+  input.eline, input.einline { font-size: 13.5px; }
+}
+
+</style>
+</head>
+<body>
+<div id="app"><noscript><p style="padding:24px">Diese Seite benötigt JavaScript. Bitte aktiviere JavaScript in deinem Browser.</p></noscript></div>
+<script>
+/*
+ * Mini-Java-Engine für Übungen zur if-Anweisung (Informatik EF)
+ * ---------------------------------------------------------------
+ * Prüft Schülercode (eine Teilmenge von Java: int, double, char, boolean,
+ * if/else if/else, for, while, return, Zuweisungen) wie ein Compiler,
+ * prüft zusätzlich die Schreibweise (Klammern, Einrückung) und führt den
+ * Code mit Testwerten aus.
+ *
+ * Fehlerarten:
+ *   parse / compile / format  -> werden den Schülern als "Syntaxfehler" gemeldet
+ *   falsche Ergebnisse        -> "Semantikfehler"
+ */
+(function (global) {
+  'use strict';
+
+  const TYPES = new Set(['int', 'double', 'char', 'boolean']);
+  const MODIFIERS = new Set(['public', 'private', 'protected', 'static']);
+  const KEYWORDS = new Set([
+    'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const', 'continue',
+    'default', 'do', 'double', 'else', 'enum', 'extends', 'final', 'finally', 'float', 'for', 'goto', 'if',
+    'implements', 'import', 'instanceof', 'int', 'interface', 'long', 'native', 'new', 'package', 'private',
+    'protected', 'public', 'return', 'short', 'static', 'strictfp', 'super', 'switch', 'synchronized', 'this',
+    'throw', 'throws', 'transient', 'try', 'void', 'volatile', 'while', 'true', 'false', 'null'
+  ]);
+  const ARITH = new Set(['+', '-', '*', '/', '%']);
+  const REL = new Set(['<', '>', '<=', '>=']);
+  const STEP_LIMIT = 200000;
+  const ARITH_EX = { javaException: 'ArithmeticException' };
+  const TIMEOUT_EX = { javaException: 'Timeout' };
+
+  // ------------------------------------------------------------------
+  // Fehlersammlung: Zeilennummer (0-basiert) -> Liste von Meldungen
+  // ------------------------------------------------------------------
+  class ErrSet {
+    constructor() { this.map = new Map(); }
+    add(line, msg) {
+      if (line == null || line < 0) line = 0;
+      if (!this.map.has(line)) this.map.set(line, []);
+      const arr = this.map.get(line);
+      if (!arr.includes(msg)) arr.push(msg);
+    }
+    get size() { return this.map.size; }
+  }
+
+  // ------------------------------------------------------------------
+  // Tokenizer
+  // ------------------------------------------------------------------
+  const ID_START = /[\p{L}\p{Nl}_$]/u;
+  const ID_PART = /[\p{L}\p{Nl}\p{Nd}\p{Mn}\p{Mc}\p{Pc}_$]/u;
+  const isDigit = c => c >= '0' && c <= '9';
+  const isIdStart = c => !!c && ID_START.test(c);
+  const isIdPart = c => !!c && ID_PART.test(c);
+  const OPS2 = new Set(['==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=', '*=', '/=', '%=',
+    '<<', '>>', '->', '::', '&=', '|=', '^=']);
+  const OPS1 = new Set(['(', ')', '{', '}', '[', ']', ';', ',', '.', '=', '<', '>', '!', '~', '?', ':',
+    '+', '-', '*', '/', '%', '&', '|', '^', '@']);
+  const ESC = { n: 10, t: 9, b: 8, r: 13, f: 12, s: 32, '0': 0, "'": 39, '"': 34, '\\': 92 };
+
+  function readNumber(s, i) {
+    const n = s.length;
+    let j = i, isDbl = false, bad = false;
+    while (j < n && isDigit(s[j])) j++;
+    if (s[j] === '.' && s[j + 1] !== '.') {
+      isDbl = true; j++;
+      while (j < n && isDigit(s[j])) j++;
+    }
+    if ((s[j] === 'e' || s[j] === 'E') &&
+        (isDigit(s[j + 1]) || ((s[j + 1] === '+' || s[j + 1] === '-') && isDigit(s[j + 2])))) {
+      isDbl = true; j += isDigit(s[j + 1]) ? 1 : 2;
+      while (j < n && isDigit(s[j])) j++;
+    }
+    const text = s.slice(i, j);
+    if (s[j] === 'd' || s[j] === 'D') { isDbl = true; j++; }
+    else if (s[j] === 'f' || s[j] === 'F' || s[j] === 'l' || s[j] === 'L') { bad = true; j++; }
+    if (isIdPart(s[j]) || s[j] === '.') {
+      bad = true;
+      while (j < n && (isIdPart(s[j]) || s[j] === '.')) j++;
+    }
+    const raw = s.slice(i, j);
+    if (bad) return { t: 'err', v: raw, raw, end: j };
+    if (isDbl) return { t: 'dbl', v: parseFloat(text), raw, end: j };
+    if (text.length > 1 && text[0] === '0') return { t: 'err', v: raw, raw, end: j };
+    const v = Number(text);
+    if (v > 2147483647) return { t: 'err', v: raw, raw, end: j };
+    return { t: 'int', v, raw, end: j };
+  }
+
+  function readChar(s, i) {
+    const n = s.length;
+    let j = i + 1, code = null;
+    if (s[j] === '\\') {
+      const e = s[j + 1];
+      if (e === 'u') {
+        let k = j + 1;
+        while (s[k] === 'u') k++;
+        const hex = s.substr(k, 4);
+        if (/^[0-9a-fA-F]{4}$/.test(hex)) { code = parseInt(hex, 16); j = k + 4; }
+      } else if (e !== undefined && Object.prototype.hasOwnProperty.call(ESC, e)) {
+        code = ESC[e]; j += 2;
+      }
+    } else if (j < n && s[j] !== "'") {
+      const cp = s.codePointAt(j);
+      if (cp <= 0xFFFF) { code = cp; j += 1; }
+    }
+    if (code !== null && s[j] === "'") return { t: 'chr', v: code, raw: s.slice(i, j + 1), end: j + 1 };
+    const k = s.indexOf("'", i + 1);
+    const end = k < 0 ? n : k + 1;
+    return { t: 'err', v: s.slice(i, end), raw: s.slice(i, end), end };
+  }
+
+  function readString(s, i) {
+    const n = s.length;
+    let j = i + 1;
+    while (j < n && s[j] !== '"') { if (s[j] === '\\') j++; j++; }
+    const end = Math.min(n, j + 1);
+    return { t: 'str', v: s.slice(i, end), raw: s.slice(i, end), end };
+  }
+
+  /** Zerlegt alle Zeilen in Tokens (Kommentare werden entfernt). */
+  function tokenize(lines) {
+    let inBlock = false;
+    const out = [];
+    for (let ln = 0; ln < lines.length; ln++) {
+      const s = String(lines[ln] == null ? '' : lines[ln]);
+      const toks = [];
+      const n = s.length;
+      let i = 0;
+      while (i < n) {
+        if (inBlock) {
+          const e = s.indexOf('*/', i);
+          if (e < 0) { i = n; break; }
+          inBlock = false; i = e + 2; continue;
+        }
+        const c = s[i];
+        if (c === ' ' || c === '\t' || c === '\r' || c === '\f' || c === ' ') { i++; continue; }
+        if (c === '/' && s[i + 1] === '/') break;
+        if (c === '/' && s[i + 1] === '*') { inBlock = true; i += 2; continue; }
+        const st = i;
+        let tk;
+        if (isIdStart(c)) {
+          i++;
+          while (i < n && isIdPart(s[i])) i++;
+          const w = s.slice(st, i);
+          tk = { t: KEYWORDS.has(w) ? 'kw' : 'id', v: w, raw: w, end: i };
+        } else if (isDigit(c) || (c === '.' && isDigit(s[i + 1]))) {
+          tk = readNumber(s, i);
+        } else if (c === "'") {
+          tk = readChar(s, i);
+        } else if (c === '"') {
+          tk = readString(s, i);
+        } else {
+          const two = s.substr(i, 2);
+          if (OPS2.has(two)) tk = { t: 'op', v: two, raw: two, end: i + 2 };
+          else if (OPS1.has(c)) tk = { t: 'op', v: c, raw: c, end: i + 1 };
+          else tk = { t: 'err', v: c, raw: c, end: i + 1 };
+        }
+        tk.ln = ln;
+        tk.col = st;
+        i = tk.end;
+        toks.push(tk);
+      }
+      out.push(toks);
+    }
+    return { lines: out, openComment: inBlock };
+  }
+
+  // ------------------------------------------------------------------
+  // Logische Zeilen: der Token-Strom wird so aufgeteilt, wie er nach der
+  // Schreibweise der Seite in Zeilen stehen müsste (neue Zeile nach "{",
+  // nach ";" außerhalb von Klammern, "}" immer allein).
+  // ------------------------------------------------------------------
+  function reflow(tokLines) {
+    const logical = [];
+    let cur = null, depth = 0;
+    const flush = () => { if (cur && cur.toks.length) logical.push(cur); cur = null; depth = 0; };
+    for (const line of tokLines) {
+      for (const tk of line) {
+        if (tk.t === 'op' && tk.v === '}') { flush(); logical.push({ toks: [tk] }); continue; }
+        if (!cur) cur = { toks: [] };
+        cur.toks.push(tk);
+        if (tk.t === 'op') {
+          if (tk.v === '(') depth++;
+          else if (tk.v === ')') depth = Math.max(0, depth - 1);
+          else if (tk.v === '{') flush();
+          else if (tk.v === ';' && depth === 0) flush();
+        }
+      }
+    }
+    flush();
+    for (const L of logical) {
+      L.phys = [...new Set(L.toks.map(t => t.ln))];
+      L.home = L.toks[0].ln;
+    }
+    return logical;
+  }
+
+  // ------------------------------------------------------------------
+  // Parser für eine logische Zeile
+  // ------------------------------------------------------------------
+  class PErr extends Error {}
+
+  class P {
+    constructor(toks) { this.t = toks; this.i = 0; }
+    peek(o = 0) { return this.t[this.i + o]; }
+    atEnd() { return this.i >= this.t.length; }
+    next() {
+      const tk = this.t[this.i++];
+      if (!tk) throw new PErr('Zeile ist unvollständig');
+      return tk;
+    }
+    isOp(v, o = 0) { const tk = this.peek(o); return !!tk && tk.t === 'op' && tk.v === v; }
+    isKw(v, o = 0) { const tk = this.peek(o); return !!tk && tk.t === 'kw' && tk.v === v; }
+    expectOp(v) {
+      const tk = this.peek();
+      if (!tk) throw new PErr('„' + v + '“ fehlt');
+      if (tk.t !== 'op' || tk.v !== v) throw new PErr('„' + v + '“ erwartet, gefunden: „' + tk.raw + '“');
+      this.i++;
+      return tk;
+    }
+    expectId() {
+      const tk = this.peek();
+      if (!tk || tk.t !== 'id') throw new PErr(tk ? 'Name erwartet, gefunden: „' + tk.raw + '“' : 'Name fehlt');
+      this.i++;
+      return tk.v;
+    }
+    expectEnd() {
+      if (!this.atEnd()) throw new PErr('Unerwartet: „' + this.peek().raw + '“');
+    }
+    // ---- Ausdrücke ----
+    expr() { return this.or(); }
+    or() { let l = this.and(); while (this.isOp('||')) { this.i++; l = { k: 'bin', op: '||', l, r: this.and() }; } return l; }
+    and() { let l = this.eq(); while (this.isOp('&&')) { this.i++; l = { k: 'bin', op: '&&', l, r: this.eq() }; } return l; }
+    eq() {
+      let l = this.rel();
+      while (this.isOp('==') || this.isOp('!=')) { const op = this.next().v; l = { k: 'bin', op, l, r: this.rel() }; }
+      return l;
+    }
+    rel() {
+      let l = this.add();
+      while (this.isOp('<') || this.isOp('>') || this.isOp('<=') || this.isOp('>=')) {
+        const op = this.next().v; l = { k: 'bin', op, l, r: this.add() };
+      }
+      return l;
+    }
+    add() {
+      let l = this.mul();
+      while (this.isOp('+') || this.isOp('-')) { const op = this.next().v; l = { k: 'bin', op, l, r: this.mul() }; }
+      return l;
+    }
+    mul() {
+      let l = this.unary();
+      while (this.isOp('*') || this.isOp('/') || this.isOp('%')) { const op = this.next().v; l = { k: 'bin', op, l, r: this.unary() }; }
+      return l;
+    }
+    unary() {
+      if (this.isOp('-') || this.isOp('+') || this.isOp('!')) { const op = this.next().v; return { k: 'un', op, e: this.unary() }; }
+      if (this.isOp('++') || this.isOp('--')) throw new PErr('++/-- innerhalb eines Ausdrucks wird hier nicht unterstützt');
+      const t1 = this.peek(1);
+      if (this.isOp('(') && t1 && t1.t === 'kw' && TYPES.has(t1.v) && this.isOp(')', 2)) {
+        this.i += 3;
+        return { k: 'cast', to: t1.v, e: this.unary() };
+      }
+      return this.primary();
+    }
+    primary() {
+      const tk = this.peek();
+      if (!tk) throw new PErr('Ausdruck fehlt');
+      this.i++;
+      if (tk.t === 'int') return { k: 'lit', ty: 'int', v: tk.v };
+      if (tk.t === 'dbl') return { k: 'lit', ty: 'double', v: tk.v };
+      if (tk.t === 'chr') return { k: 'lit', ty: 'char', v: tk.v };
+      if (tk.t === 'kw' && (tk.v === 'true' || tk.v === 'false')) return { k: 'lit', ty: 'boolean', v: tk.v === 'true' };
+      if (tk.t === 'id') {
+        if (this.isOp('(') || this.isOp('.') || this.isOp('[')) throw new PErr('Methodenaufrufe und Objekte werden hier nicht verwendet');
+        if (this.isOp('++') || this.isOp('--')) throw new PErr('++/-- innerhalb eines Ausdrucks wird hier nicht unterstützt');
+        return { k: 'var', name: tk.v };
+      }
+      if (tk.t === 'op' && tk.v === '(') { const e = this.expr(); this.expectOp(')'); return e; }
+      if (tk.t === 'str') throw new PErr('Zeichenketten (String) werden hier nicht verwendet');
+      throw new PErr('Ausdruck erwartet, gefunden: „' + tk.raw + '“');
+    }
+  }
+
+  function simpleStmt(p, full) {
+    let node;
+    if (p.isOp('++') || p.isOp('--')) {
+      const op = p.next().v;
+      node = { k: 'incdec', name: p.expectId(), op };
+    } else {
+      const tk = p.peek();
+      if (!tk || tk.t !== 'id') throw new PErr('Anweisung erwartet');
+      p.i++;
+      const name = tk.v;
+      const nx = p.peek();
+      if (!nx) throw new PErr('Anweisung ist unvollständig');
+      if (nx.t === 'op' && (nx.v === '++' || nx.v === '--')) { p.i++; node = { k: 'incdec', name, op: nx.v }; }
+      else if (nx.t === 'op' && nx.v === '=') { p.i++; node = { k: 'assign', name, e: p.expr() }; }
+      else if (nx.t === 'op' && ['+=', '-=', '*=', '/=', '%='].includes(nx.v)) { p.i++; node = { k: 'compound', name, op: nx.v[0], e: p.expr() }; }
+      else if (nx.t === 'op' && nx.v === '(') throw new PErr('Methodenaufrufe werden hier nicht verwendet');
+      else throw new PErr('Keine gültige Anweisung');
+    }
+    if (full) { p.expectOp(';'); p.expectEnd(); }
+    return node;
+  }
+
+  /** Einzelne Anweisung ohne geschweifte Klammern (z. B. nach if (...) ). */
+  function bodyStmt(p) {
+    if (p.isKw('return')) {
+      p.i++;
+      if (p.isOp(';')) { p.i++; p.expectEnd(); return { k: 'return', e: null }; }
+      const e = p.expr(); p.expectOp(';'); p.expectEnd();
+      return { k: 'return', e };
+    }
+    if (p.isOp(';')) { p.i++; p.expectEnd(); return { k: 'empty' }; }
+    const tk = p.peek();
+    if (tk && (tk.t === 'id' || p.isOp('++') || p.isOp('--'))) return simpleStmt(p, true);
+    throw new PErr('„{“ fehlt am Zeilenende');
+  }
+
+  /** ( Bedingung ) {   bzw.   ( Bedingung ) einzelneAnweisung; */
+  function condHeader(p) {
+    p.expectOp('(');
+    const cond = p.expr();
+    p.expectOp(')');
+    if (p.isOp('{')) { p.i++; p.expectEnd(); return { cond, inline: null }; }
+    if (p.atEnd()) throw new PErr('„{“ fehlt am Zeilenende');
+    return { cond, inline: bodyStmt(p) };
+  }
+
+  function forHeader(p) {
+    p.expectOp('(');
+    let init = null, cond = null, upd = null;
+    if (!p.isOp(';')) {
+      const tk = p.peek();
+      if (tk && tk.t === 'kw' && TYPES.has(tk.v)) { p.i++; init = declBody(p, tk.v); }
+      else init = simpleStmt(p, false);
+    }
+    p.expectOp(';');
+    if (!p.isOp(';')) cond = p.expr();
+    p.expectOp(';');
+    if (!p.isOp(')')) upd = simpleStmt(p, false);
+    p.expectOp(')');
+    if (p.isOp('{')) { p.i++; p.expectEnd(); return { k: 'for', init, cond, upd, inline: null }; }
+    if (p.atEnd()) throw new PErr('„{“ fehlt am Zeilenende');
+    return { k: 'for', init, cond, upd, inline: bodyStmt(p) };
+  }
+
+  function declBody(p, ty) {
+    const decls = [];
+    for (;;) {
+      const name = p.expectId();
+      let init = null;
+      if (p.isOp('=')) { p.i++; init = p.expr(); }
+      decls.push({ name, init });
+      if (p.isOp(',')) { p.i++; continue; }
+      break;
+    }
+    return { k: 'decl', ty, decls };
+  }
+
+  function declOrMethod(p) {
+    const mods = [];
+    while (p.peek() && p.peek().t === 'kw' && MODIFIERS.has(p.peek().v)) mods.push(p.next().v);
+    const tyTk = p.peek();
+    if (!tyTk || tyTk.t !== 'kw' || !(TYPES.has(tyTk.v) || tyTk.v === 'void')) {
+      throw new PErr(tyTk ? 'Datentyp erwartet, gefunden: „' + tyTk.raw + '“' : 'Datentyp fehlt');
+    }
+    p.i++;
+    const ty = tyTk.v;
+    const nameTk = p.peek();
+    if (!nameTk || nameTk.t !== 'id') throw new PErr('Name erwartet');
+    if (p.isOp('(', 1)) {
+      p.i += 2;
+      const params = [];
+      if (!p.isOp(')')) {
+        for (;;) {
+          const pt = p.peek();
+          if (!pt || pt.t !== 'kw' || !TYPES.has(pt.v)) throw new PErr('Parametertyp erwartet');
+          p.i++;
+          params.push({ ty: pt.v, name: p.expectId() });
+          if (p.isOp(',')) { p.i++; continue; }
+          break;
+        }
+      }
+      p.expectOp(')');
+      if (p.atEnd()) throw new PErr('„{“ fehlt am Zeilenende');
+      p.expectOp('{');
+      p.expectEnd();
+      const access = mods.filter(m => m !== 'static');
+      if (access.length > 1 || new Set(mods).size !== mods.length) throw new PErr('Ungültige Modifikatoren');
+      return { k: 'method', mods, ret: ty, name: nameTk.v, params };
+    }
+    if (mods.length) throw new PErr('Lokale Variablen haben keinen Modifikator wie public');
+    if (ty === 'void') throw new PErr('void ist kein Datentyp für Variablen');
+    const d = declBody(p, ty);
+    p.expectOp(';');
+    p.expectEnd();
+    return d;
+  }
+
+  /** Parst eine logische Zeile und liefert einen Knoten (oder einen Fehlerknoten). */
+  function parseLine(toks) {
+    const p = new P(toks);
+    const first = toks[0], last = toks[toks.length - 1];
+    const opens = last.t === 'op' && last.v === '{';
+    const closes = first.t === 'op' && first.v === '}';
+    try {
+      for (const tk of toks) {
+        if (tk.t === 'err') throw new PErr('Ungültiges Zeichen oder Literal: „' + tk.raw + '“');
+      }
+      if (closes) {
+        if (toks.length === 1) return { k: 'close' };
+        throw new PErr('„}“ muss allein in einer Zeile stehen');
+      }
+      if (first.t === 'kw') {
+        switch (first.v) {
+          case 'else': {
+            p.i = 1;
+            if (p.isOp('{')) { p.i++; p.expectEnd(); return { k: 'else', inline: null }; }
+            if (p.isKw('if')) { p.i++; const h = condHeader(p); return { k: 'elseif', cond: h.cond, inline: h.inline }; }
+            if (p.atEnd()) throw new PErr('„{“ fehlt nach else');
+            return { k: 'else', inline: bodyStmt(p) };
+          }
+          case 'if': { p.i = 1; const h = condHeader(p); return { k: 'if', cond: h.cond, inline: h.inline }; }
+          case 'while': { p.i = 1; const h = condHeader(p); return { k: 'while', cond: h.cond, inline: h.inline }; }
+          case 'for': { p.i = 1; return forHeader(p); }
+          case 'return': {
+            p.i = 1;
+            if (p.isOp(';')) { p.i++; p.expectEnd(); return { k: 'return', e: null }; }
+            const e = p.expr();
+            p.expectOp(';');
+            p.expectEnd();
+            return { k: 'return', e };
+          }
+          default:
+            if (MODIFIERS.has(first.v) || TYPES.has(first.v) || first.v === 'void') return declOrMethod(p);
+            throw new PErr('„' + first.v + '“ wird hier nicht unterstützt');
+        }
+      }
+      if (first.t === 'id' || (first.t === 'op' && (first.v === '++' || first.v === '--'))) return simpleStmt(p, true);
+      if (first.t === 'op' && first.v === ';' && toks.length === 1) return { k: 'empty' };
+      if (first.t === 'op' && first.v === '{') throw new PErr('„{“ gehört an das Ende der Zeile davor');
+      throw new PErr('Ungültiger Zeilenanfang: „' + first.raw + '“');
+    } catch (e) {
+      if (!(e instanceof PErr)) throw e;
+      let head = null;
+      if (first.t === 'kw') {
+        if (first.v === 'if') head = 'if';
+        else if (first.v === 'else') head = (toks[1] && toks[1].t === 'kw' && toks[1].v === 'if') ? 'elseif' : 'else';
+        else if (first.v === 'for' || first.v === 'while') head = 'loop';
+        else if (MODIFIERS.has(first.v) || TYPES.has(first.v) || first.v === 'void') {
+          head = toks.some(t => t.t === 'op' && t.v === '(') ? 'method' : null;
+        }
+      }
+      return { k: 'error', msg: e.message, opens, closes, head };
+    }
+  }
+
+  const OPENERS = new Set(['method', 'if', 'elseif', 'else', 'while', 'for']);
+
+  /** Wie parseLine, erkennt aber Kopfzeilen, bei denen nur die "{" fehlt. */
+  function parsePiece(toks) {
+    const nd = parseLine(toks);
+    if (nd.k !== 'error') return nd;
+    const last = toks[toks.length - 1];
+    if (last.t === 'op' && last.v === '{') return nd;
+    const nd2 = parseLine([...toks, { t: 'op', v: '{', raw: '{', ln: last.ln }]);
+    if (OPENERS.has(nd2.k) && !nd2.inline) { nd2.missingBrace = true; return nd2; }
+    return nd;
+  }
+
+  /** Fügt eine logische Zeile hinzu; teilt sie auf, wenn sie sich nur über mehrere Zeilen parsen lässt. */
+  function addLogical(L, out) {
+    const nd = parsePiece(L.toks);
+    if (L.phys.length > 1) {
+      const first = L.phys[0];
+      const T1 = L.toks.filter(t => t.ln === first);
+      const lastT1 = T1[T1.length - 1];
+      const headerish = (lastT1.t === 'op' && lastT1.v === ')') ||
+        (T1.length === 1 && T1[0].t === 'kw' && T1[0].v === 'else');
+      if (nd.k === 'error' || (nd.inline && headerish)) {
+        out.push({ toks: T1, phys: [first], home: first, node: parsePiece(T1) });
+        const rest = L.toks.filter(t => t.ln !== first);
+        addLogical({ toks: rest, phys: [...new Set(rest.map(t => t.ln))], home: rest[0].ln }, out);
+        return;
+      }
+    }
+    L.node = nd;
+    out.push(L);
+  }
+
+  // ------------------------------------------------------------------
+  // Blockstruktur aus den logischen Zeilen aufbauen
+  // ------------------------------------------------------------------
+  function buildStructure(logical, perr, lastLine, firstLine, lines) {
+    const root = { k: 'block', stmts: [] };
+    const stack = [{ blk: root, lidx: -1, kind: 'root' }];
+    let method = null, structural = false, lastClosed = null, lastInline = null;
+
+    const pushInline = (blk, stmt, home) => { stmt.home = home; blk.stmts.push(stmt); };
+    const stmtOutside = (L) => { perr.add(L.home, 'Anweisung steht außerhalb der Methode'); structural = true; };
+
+    for (let li = 0; li < logical.length; li++) {
+      const L = logical[li];
+      const nd = L.node;
+      const top = stack[stack.length - 1];
+      const justClosed = lastClosed;
+      lastClosed = null;
+      const prevInline = lastInline;
+      lastInline = null;
+      nd.home = L.home;
+      L.parent = top.lidx;
+      switch (nd.k) {
+        case 'method': {
+          const blk = { k: 'block', stmts: [] };
+          nd.body = blk;
+          if (stack.length !== 1) {
+            perr.add(L.home, 'Eine Methode darf nicht in einer anderen stehen'); structural = true;
+            stack.push({ blk, lidx: li, kind: 'generic' });
+          } else if (method) {
+            perr.add(L.home, 'Hier ist nur eine einzige Methode vorgesehen'); structural = true;
+            stack.push({ blk, lidx: li, kind: 'generic' });
+          } else {
+            method = nd;
+            stack.push({ blk, lidx: li, kind: 'method', node: nd });
+          }
+          break;
+        }
+        case 'if': {
+          if (top.kind === 'root') stmtOutside(L);
+          const blk = { k: 'block', stmts: [] };
+          nd.then = blk; nd.els = null;
+          top.blk.stmts.push(nd);
+          if (nd.inline) { pushInline(blk, nd.inline, L.home); lastClosed = { tail: nd }; lastInline = { kind: 'ifpart', tail: nd, blk }; }
+          else stack.push({ blk, lidx: li, kind: 'ifpart', tail: nd });
+          break;
+        }
+        case 'while':
+        case 'for': {
+          if (top.kind === 'root') stmtOutside(L);
+          const blk = { k: 'block', stmts: [] };
+          nd.body = blk;
+          if (nd.k === 'for') {
+            if (nd.init) nd.init.home = L.home;
+            if (nd.upd) nd.upd.home = L.home;
+          }
+          top.blk.stmts.push(nd);
+          if (nd.inline) { pushInline(blk, nd.inline, L.home); lastInline = { kind: 'loop', blk }; }
+          else stack.push({ blk, lidx: li, kind: 'loop' });
+          break;
+        }
+        case 'elseif':
+        case 'else': {
+          const blk = { k: 'block', stmts: [] };
+          if (justClosed && justClosed.tail.els === null) {
+            const tail = justClosed.tail;
+            if (nd.k === 'else') {
+              tail.els = blk;
+              if (nd.inline) { pushInline(blk, nd.inline, L.home); lastInline = { kind: 'elsepart', blk }; }
+              else stack.push({ blk, lidx: li, kind: 'elsepart' });
+            } else {
+              const inner = { k: 'if', cond: nd.cond, then: blk, els: null, home: L.home };
+              tail.els = inner;
+              if (nd.inline) { pushInline(blk, nd.inline, L.home); lastClosed = { tail: inner }; lastInline = { kind: 'ifpart', tail: inner, blk }; }
+              else stack.push({ blk, lidx: li, kind: 'ifpart', tail: inner });
+            }
+          } else {
+            perr.add(L.home, 'else ohne passendes if davor'); structural = true;
+            if (!nd.inline) stack.push({ blk, lidx: li, kind: 'generic' });
+          }
+          break;
+        }
+        case 'close': {
+          if (stack.length === 1) {
+            let culprit = L.home;
+            for (let j = li - 1; j >= 0; j--) {
+              const C = logical[j];
+              if (C.node.k === 'close' && C.opener >= 0 &&
+                  indentWidth(lines[C.home]) !== indentWidth(lines[logical[C.opener].home])) { culprit = C.home; break; }
+            }
+            perr.add(culprit, 'Zu viele schließende Klammern');
+            structural = true; L.opener = -1;
+            break;
+          }
+          const fr = stack.pop();
+          L.opener = fr.lidx;
+          L.parent = stack[stack.length - 1].lidx;
+          if (fr.kind === 'method') fr.node.closeHome = L.home;
+          if (fr.kind === 'ifpart') lastClosed = { tail: fr.tail };
+          break;
+        }
+        case 'error': {
+          // Fehlerhafte Zeile: Struktur möglichst sinnvoll fortsetzen, damit keine Folgefehler entstehen
+          if (nd.closes && stack.length > 1) stack.pop();
+          const lone = L.toks.length === 1 && L.toks[0].t === 'op' && L.toks[0].v === '{';
+          if (lone && prevInline) {
+            stack.push({ blk: prevInline.blk, lidx: li, kind: prevInline.kind, tail: prevInline.tail });
+            break;
+          }
+          if (nd.opens) {
+            const blk = { k: 'block', stmts: [] };
+            const dummyTail = { k: 'if', els: null, dummy: true };
+            if ((nd.head === 'elseif' || nd.head === 'else') && justClosed && justClosed.tail.els === null) {
+              justClosed.tail.els = { k: 'dummy' };
+            }
+            if (nd.head === 'if' || nd.head === 'elseif') stack.push({ blk, lidx: li, kind: 'ifpart', tail: dummyTail });
+            else if (nd.head === 'else') stack.push({ blk, lidx: li, kind: 'elsepart' });
+            else stack.push({ blk, lidx: li, kind: 'generic' });
+          }
+          break;
+        }
+        default: {
+          if (top.kind === 'root') stmtOutside(L);
+          else top.blk.stmts.push(nd);
+        }
+      }
+    }
+    if (stack.length > 1) { perr.add(lastLine, 'Es fehlt mindestens eine schließende Klammer'); structural = true; }
+    if (!method && !structural) { perr.add(firstLine, 'Methodenkopf fehlt'); structural = true; }
+    return { method, structural };
+  }
+
+  // ------------------------------------------------------------------
+  // Einrückung
+  // ------------------------------------------------------------------
+  function indentWidth(s) {
+    let w = 0;
+    for (const ch of String(s)) {
+      if (ch === ' ' || ch === ' ') w++;
+      else if (ch === '\t') w = (Math.floor(w / 4) + 1) * 4;
+      else break;
+    }
+    return w;
+  }
+
+  function checkIndent(logical, lines, perPhys, ferr, editable) {
+    const clean = L => L.phys.length === 1 && perPhys.get(L.home).length === 1 && !L.node.inline;
+    const groups = new Map();
+    const closes = [];
+    const badIndent = new Set();
+    for (const L of logical) {
+      if (L.node.k === 'close') { closes.push(L); continue; }
+      if (L.parent >= 0) {
+        if (!groups.has(L.parent)) groups.set(L.parent, []);
+        groups.get(L.parent).push(L);
+      }
+    }
+    for (const [pi, arr] of groups) {
+      const pw = indentWidth(lines[logical[pi].home]);
+      const cand = arr.filter(clean);
+      if (!cand.length) continue;
+      let ref;
+      const fixed = editable ? cand.find(L => !editable[L.home]) : null;
+      if (fixed) ref = indentWidth(lines[fixed.home]);
+      else {
+        // häufigste Einrückung unter den Zeilen, die überhaupt weiter eingerückt sind
+        const cnt = new Map();
+        let best = null, bestN = 0;
+        for (const L of cand) {
+          const w = indentWidth(lines[L.home]);
+          if (w <= pw) continue;
+          const n = (cnt.get(w) || 0) + 1;
+          cnt.set(w, n);
+          if (n > bestN) { best = w; bestN = n; }
+        }
+        ref = best;
+      }
+      for (const L of cand) {
+        const w = indentWidth(lines[L.home]);
+        if (w <= pw) { ferr.add(L.home, 'Die Zeile muss weiter eingerückt sein als die Zeile mit der öffnenden Klammer'); badIndent.add(L.home); }
+        else if (w !== ref) { ferr.add(L.home, 'Zeilen auf derselben Ebene müssen gleich weit eingerückt sein'); badIndent.add(L.home); }
+      }
+    }
+    for (const L of closes) {
+      if (L.opener < 0 || !clean(L)) continue;
+      const O = logical[L.opener];
+      if (indentWidth(lines[L.home]) !== indentWidth(lines[O.home])) {
+        ferr.add(L.home, 'Die schließende Klammer muss genau so weit eingerückt sein wie die Zeile mit der öffnenden Klammer');
+      } else if (badIndent.has(O.home)) {
+        ferr.add(L.home, 'Die schließende Klammer muss genau so weit eingerückt sein wie die (richtig eingerückte) Zeile mit der öffnenden Klammer');
+      }
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Werte, Umwandlungen, Rechnen (Java-Semantik)
+  // ------------------------------------------------------------------
+  const isNum = t => t === 'int' || t === 'double' || t === 'char';
+
+  function d2i(d) {
+    if (Number.isNaN(d)) return 0;
+    if (d >= 2147483647) return 2147483647;
+    if (d <= -2147483648) return -2147483648;
+    return Math.trunc(d) | 0;
+  }
+
+  function convert(x, from, to) {
+    if (from === to || to === 'boolean' || to === 'double') return x;
+    if (to === 'int') return from === 'double' ? d2i(x) : x;
+    if (to === 'char') return (from === 'double' ? d2i(x) : x) & 0xFFFF;
+    return x;
+  }
+
+  function applyArith(op, ty, a, b) {
+    if (ty === 'int') {
+      switch (op) {
+        case '+': return (a + b) | 0;
+        case '-': return (a - b) | 0;
+        case '*': return Math.imul(a, b);
+        case '/': if (b === 0) throw ARITH_EX; return (a / b) | 0;
+        case '%': if (b === 0) throw ARITH_EX; return (a % b) | 0;
+      }
+    }
+    switch (op) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return a / b;
+      case '%': return a % b;
+    }
+    throw new Error('Unbekannter Operator ' + op);
+  }
+
+  function applyBin(op, ty, a, b) {
+    switch (op) {
+      case '==': return a === b;
+      case '!=': return a !== b;
+      case '<': return a < b;
+      case '>': return a > b;
+      case '<=': return a <= b;
+      case '>=': return a >= b;
+      case '&&': return a && b;
+      case '||': return a || b;
+      default: return applyArith(op, ty, a, b);
+    }
+  }
+
+  function assignable(e, target) {
+    const s = e.ty;
+    if (s === target) return true;
+    if (target === 'double' && (s === 'int' || s === 'char')) return true;
+    if (target === 'int' && s === 'char') return true;
+    if (target === 'char' && s === 'int' && e.cv !== undefined && e.cv >= 0 && e.cv <= 65535) return true;
+    return false;
+  }
+
+  // ------------------------------------------------------------------
+  // Typprüfung (wie der Compiler)
+  // ------------------------------------------------------------------
+  function compileMethod(method, spec, cerr) {
+    if (spec) {
+      const okName = method.name === spec.name;
+      const okRet = method.ret === spec.ret;
+      const okParams = method.params.length === spec.params.length &&
+        method.params.every((p, i) => p.ty === spec.params[i].ty);
+      if (!okName || !okRet || !okParams) cerr.add(method.home, 'Der Methodenkopf passt nicht zur Aufgabenstellung (Name, Rückgabetyp oder Parametertypen)');
+    }
+    let nextId = 0;
+    const root = { vars: new Map(), parent: null };
+    const paramVars = [];
+    for (const p of method.params) {
+      if (root.vars.has(p.name)) { cerr.add(method.home, 'Zwei Parameter heißen gleich'); }
+      const v = { id: nextId++, ty: p.ty, name: p.name };
+      root.vars.set(p.name, v);
+      paramVars.push(v);
+    }
+    const lookup = (sc, name) => {
+      for (let s = sc; s; s = s.parent) { const v = s.vars.get(name); if (v) return v; }
+      return null;
+    };
+    const declare = (sc, name, ty, line) => {
+      if (lookup(sc, name)) cerr.add(line, 'Die Variable ' + name + ' gibt es hier bereits');
+      const v = { id: nextId++, ty, name };
+      sc.vars.set(name, v);
+      return v;
+    };
+    const fail = (n, line, msg) => { cerr.add(line, msg); n.ty = 'err'; };
+
+    function typeExpr(n, sc, line) {
+      switch (n.k) {
+        case 'lit': n.cv = n.v; return;
+        case 'var': {
+          const v = lookup(sc, n.name);
+          if (!v) return fail(n, line, n.name + ' ist hier nicht bekannt');
+          n.v = v; n.ty = v.ty;
+          return;
+        }
+        case 'un': {
+          typeExpr(n.e, sc, line);
+          const t = n.e.ty;
+          if (t === 'err') { n.ty = 'err'; return; }
+          if (n.op === '!') {
+            if (t !== 'boolean') return fail(n, line, '! passt nur zu boolean');
+            n.ty = 'boolean';
+            if (n.e.cv !== undefined) n.cv = !n.e.cv;
+            return;
+          }
+          if (!isNum(t)) return fail(n, line, 'Vorzeichen passt nur zu Zahlen');
+          n.ty = t === 'double' ? 'double' : 'int';
+          if (n.e.cv !== undefined) n.cv = n.op === '-' ? (n.ty === 'int' ? (-n.e.cv) | 0 : -n.e.cv) : n.e.cv;
+          return;
+        }
+        case 'cast': {
+          typeExpr(n.e, sc, line);
+          const t = n.e.ty;
+          if (t === 'err') { n.ty = 'err'; return; }
+          if ((n.to === 'boolean') !== (t === 'boolean')) return fail(n, line, 'Diese Typumwandlung ist nicht möglich');
+          n.ty = n.to;
+          if (n.e.cv !== undefined) n.cv = convert(n.e.cv, t, n.to);
+          return;
+        }
+        case 'bin': {
+          typeExpr(n.l, sc, line);
+          typeExpr(n.r, sc, line);
+          const a = n.l.ty, b = n.r.ty;
+          if (a === 'err' || b === 'err') { n.ty = 'err'; return; }
+          const op = n.op;
+          if (ARITH.has(op)) {
+            if (!isNum(a) || !isNum(b)) return fail(n, line, 'Mit diesen Werten kann man nicht rechnen');
+            n.ty = (a === 'double' || b === 'double') ? 'double' : 'int';
+          } else if (REL.has(op)) {
+            if (!isNum(a) || !isNum(b)) return fail(n, line, 'Diese Werte kann man nicht mit ' + op + ' vergleichen');
+            n.ty = 'boolean';
+          } else if (op === '==' || op === '!=') {
+            if (!((isNum(a) && isNum(b)) || (a === 'boolean' && b === 'boolean'))) return fail(n, line, 'Diese Werte kann man nicht vergleichen');
+            n.ty = 'boolean';
+          } else {
+            if (a !== 'boolean' || b !== 'boolean') return fail(n, line, op + ' verknüpft nur Wahrheitswerte');
+            n.ty = 'boolean';
+          }
+          if (n.l.cv !== undefined && n.r.cv !== undefined) {
+            try { n.cv = applyBin(op, n.ty, n.l.cv, n.r.cv); } catch (e) { if (e !== ARITH_EX) throw e; }
+          }
+          return;
+        }
+      }
+    }
+
+    const needBool = (e, line) => {
+      if (e.ty !== 'err' && e.ty !== 'boolean') cerr.add(line, 'Eine Bedingung muss true oder false ergeben (Typ boolean)');
+    };
+
+    function checkBlock(b, sc) {
+      const inner = { vars: new Map(), parent: sc };
+      for (const s of b.stmts) checkStmt(s, inner);
+    }
+
+    function checkStmt(s, sc) {
+      const line = s.home;
+      switch (s.k) {
+        case 'decl':
+          for (const d of s.decls) {
+            if (d.init) {
+              typeExpr(d.init, sc, line);
+              if (d.init.ty !== 'err' && !assignable(d.init, s.ty)) cerr.add(line, 'Der Wert passt nicht zum Datentyp ' + s.ty);
+            }
+            d.v = declare(sc, d.name, s.ty, line);
+          }
+          return;
+        case 'assign': {
+          typeExpr(s.e, sc, line);
+          const v = lookup(sc, s.name);
+          if (!v) { cerr.add(line, s.name + ' ist hier nicht bekannt'); return; }
+          s.v = v;
+          if (s.e.ty !== 'err' && !assignable(s.e, v.ty)) cerr.add(line, 'Der Wert passt nicht zum Datentyp ' + v.ty);
+          return;
+        }
+        case 'compound': {
+          typeExpr(s.e, sc, line);
+          const v = lookup(sc, s.name);
+          if (!v) { cerr.add(line, s.name + ' ist hier nicht bekannt'); return; }
+          s.v = v;
+          if (s.e.ty === 'err') return;
+          if (!isNum(v.ty) || !isNum(s.e.ty)) { cerr.add(line, 'Mit diesen Werten kann man nicht rechnen'); return; }
+          s.pty = (v.ty === 'double' || s.e.ty === 'double') ? 'double' : 'int';
+          return;
+        }
+        case 'incdec': {
+          const v = lookup(sc, s.name);
+          if (!v) { cerr.add(line, s.name + ' ist hier nicht bekannt'); return; }
+          s.v = v;
+          if (!isNum(v.ty)) cerr.add(line, '++ und -- gehen nur bei Zahlen');
+          return;
+        }
+        case 'return':
+          s.rty = method.ret;
+          if (s.e) {
+            typeExpr(s.e, sc, line);
+            if (method.ret === 'void') cerr.add(line, 'Eine void-Methode gibt keinen Wert zurück');
+            else if (s.e.ty !== 'err' && !assignable(s.e, method.ret)) cerr.add(line, 'Der Rückgabewert passt nicht zum Rückgabetyp ' + method.ret);
+          } else if (method.ret !== 'void') cerr.add(line, 'Hier fehlt der Rückgabewert');
+          return;
+        case 'empty':
+          return;
+        case 'if':
+          typeExpr(s.cond, sc, line);
+          needBool(s.cond, line);
+          checkBlock(s.then, sc);
+          if (s.els) { if (s.els.k === 'if') checkStmt(s.els, sc); else checkBlock(s.els, sc); }
+          return;
+        case 'while':
+          typeExpr(s.cond, sc, line);
+          needBool(s.cond, line);
+          checkBlock(s.body, sc);
+          return;
+        case 'for': {
+          const fs = { vars: new Map(), parent: sc };
+          if (s.init) checkStmt(s.init, fs);
+          if (s.cond) { typeExpr(s.cond, fs, line); needBool(s.cond, line); }
+          if (s.upd) checkStmt(s.upd, fs);
+          checkBlock(s.body, fs);
+          return;
+        }
+      }
+    }
+
+    checkBlock(method.body, root);
+    return { nVars: nextId, paramVars };
+  }
+
+  // ------------------------------------------------------------------
+  // Erreichbarkeit, fehlendes return, Variablen ohne Wert (wie javac)
+  // ------------------------------------------------------------------
+  const ALL = null;
+  const inter = (a, b) => {
+    if (a === ALL) return b;
+    if (b === ALL) return a;
+    const r = new Set();
+    for (const x of a) if (b.has(x)) r.add(x);
+    return r;
+  };
+  const plus = (a, id) => { if (a === ALL) return ALL; const r = new Set(a); r.add(id); return r; };
+
+  function flowMethod(method, paramVars, cerr) {
+    function readsOk(e, da, line) {
+      if (!e) return;
+      switch (e.k) {
+        case 'var':
+          if (da !== ALL && e.v && !da.has(e.v.id)) cerr.add(line, 'Die Variable ' + e.name + ' hat hier eventuell noch keinen Wert');
+          return;
+        case 'un': case 'cast': readsOk(e.e, da, line); return;
+        case 'bin':
+          if (e.op === '&&' || e.op === '||') { condDA(e, da, line); return; }
+          readsOk(e.l, da, line); readsOk(e.r, da, line);
+          return;
+      }
+    }
+    function condDA(e, da, line) {
+      if (e.cv === true) return { t: da, f: ALL };
+      if (e.cv === false) return { t: ALL, f: da };
+      if (e.k === 'bin' && e.op === '&&') { const a = condDA(e.l, da, line); const b = condDA(e.r, a.t, line); return { t: b.t, f: inter(a.f, b.f) }; }
+      if (e.k === 'bin' && e.op === '||') { const a = condDA(e.l, da, line); const b = condDA(e.r, a.f, line); return { t: inter(a.t, b.t), f: b.f }; }
+      if (e.k === 'un' && e.op === '!') { const a = condDA(e.e, da, line); return { t: a.f, f: a.t }; }
+      readsOk(e, da, line);
+      return { t: da, f: da };
+    }
+    function flowBlock(b, da) {
+      let cur = da, cc = true;
+      for (const s of b.stmts) {
+        if (!cc) { cerr.add(s.home, 'Diese Anweisung kann nie erreicht werden'); return { da: ALL, cc: false }; }
+        const r = flowStmt(s, cur);
+        cur = r.da; cc = r.cc;
+      }
+      return { da: cur, cc };
+    }
+    function flowStmt(s, da) {
+      const line = s.home;
+      switch (s.k) {
+        case 'decl': {
+          let cur = da;
+          for (const d of s.decls) if (d.init) { readsOk(d.init, cur, line); cur = plus(cur, d.v.id); }
+          return { da: cur, cc: true };
+        }
+        case 'assign':
+          readsOk(s.e, da, line);
+          return { da: plus(da, s.v.id), cc: true };
+        case 'compound':
+        case 'incdec':
+          if (s.e) readsOk(s.e, da, line);
+          if (da !== ALL && !da.has(s.v.id)) cerr.add(line, 'Die Variable ' + s.name + ' hat hier eventuell noch keinen Wert');
+          return { da, cc: true };
+        case 'return':
+          if (s.e) readsOk(s.e, da, line);
+          return { da: ALL, cc: false };
+        case 'empty':
+          return { da, cc: true };
+        case 'if': {
+          const c = condDA(s.cond, da, line);
+          const r1 = flowBlock(s.then, c.t);
+          if (!s.els) return { da: inter(r1.da, c.f), cc: true };
+          const r2 = s.els.k === 'if' ? flowStmt(s.els, c.f) : flowBlock(s.els, c.f);
+          return { da: inter(r1.da, r2.da), cc: r1.cc || r2.cc };
+        }
+        case 'while': {
+          const c = condDA(s.cond, da, line);
+          if (s.cond.cv === false) { cerr.add(line, 'Der Schleifenrumpf kann nie erreicht werden'); return { da: c.f, cc: true }; }
+          flowBlock(s.body, c.t);
+          return { da: c.f, cc: s.cond.cv !== true };
+        }
+        case 'for': {
+          let cur = da;
+          if (s.init) cur = flowStmt(s.init, cur).da;
+          const c = s.cond ? condDA(s.cond, cur, line) : { t: cur, f: ALL };
+          if (s.cond && s.cond.cv === false) { cerr.add(line, 'Der Schleifenrumpf kann nie erreicht werden'); return { da: c.f, cc: true }; }
+          const r = flowBlock(s.body, c.t);
+          if (s.upd) flowStmt(s.upd, r.cc ? r.da : ALL);
+          return { da: c.f, cc: !(s.cond == null || s.cond.cv === true) };
+        }
+      }
+      return { da, cc: true };
+    }
+    const r = flowBlock(method.body, new Set(paramVars.map(v => v.id)));
+    if (r.cc && method.ret !== 'void') cerr.add(method.closeHome, 'Die Methode kann enden, ohne einen Wert zurückzugeben (return fehlt)');
+  }
+
+  // ------------------------------------------------------------------
+  // Interpreter
+  // ------------------------------------------------------------------
+  function ev(n, env) {
+    if (n.cv !== undefined) return n.cv;
+    switch (n.k) {
+      case 'var': return env[n.v.id];
+      case 'un': {
+        const x = ev(n.e, env);
+        if (n.op === '!') return !x;
+        if (n.op === '-') return n.ty === 'int' ? (-x) | 0 : -x;
+        return x;
+      }
+      case 'cast': return convert(ev(n.e, env), n.e.ty, n.ty);
+      case 'bin': {
+        const op = n.op;
+        if (op === '&&') return ev(n.l, env) ? ev(n.r, env) : false;
+        if (op === '||') return ev(n.l, env) ? true : ev(n.r, env);
+        return applyBin(op, n.ty, ev(n.l, env), ev(n.r, env));
+      }
+      case 'lit': return n.v;
+    }
+    throw new Error('Unbekannter Ausdruck');
+  }
+
+  function execBlock(b, env, ctx) {
+    const st = b.stmts;
+    for (let i = 0; i < st.length; i++) {
+      const r = exec(st[i], env, ctx);
+      if (r) return r;
+    }
+    return null;
+  }
+
+  function exec(s, env, ctx) {
+    if (++ctx.steps > STEP_LIMIT) throw TIMEOUT_EX;
+    switch (s.k) {
+      case 'decl':
+        for (const d of s.decls) env[d.v.id] = d.init ? convert(ev(d.init, env), d.init.ty, s.ty) : undefined;
+        return null;
+      case 'assign':
+        env[s.v.id] = convert(ev(s.e, env), s.e.ty, s.v.ty);
+        return null;
+      case 'compound': {
+        const r = applyArith(s.op, s.pty, env[s.v.id], ev(s.e, env));
+        env[s.v.id] = convert(r, s.pty, s.v.ty);
+        return null;
+      }
+      case 'incdec': {
+        const v = s.v, d = s.op === '++' ? 1 : -1, x = env[v.id];
+        env[v.id] = v.ty === 'int' ? (x + d) | 0 : v.ty === 'char' ? (x + d) & 0xFFFF : x + d;
+        return null;
+      }
+      case 'return':
+        return { v: s.e ? convert(ev(s.e, env), s.e.ty, s.rty) : undefined };
+      case 'empty':
+        return null;
+      case 'if':
+        if (ev(s.cond, env)) return execBlock(s.then, env, ctx);
+        if (s.els) return s.els.k === 'if' ? exec(s.els, env, ctx) : execBlock(s.els, env, ctx);
+        return null;
+      case 'while':
+        while (ev(s.cond, env)) {
+          if (++ctx.steps > STEP_LIMIT) throw TIMEOUT_EX;
+          const r = execBlock(s.body, env, ctx);
+          if (r) return r;
+        }
+        return null;
+      case 'for':
+        if (s.init) exec(s.init, env, ctx);
+        while (!s.cond || ev(s.cond, env)) {
+          if (++ctx.steps > STEP_LIMIT) throw TIMEOUT_EX;
+          const r = execBlock(s.body, env, ctx);
+          if (r) return r;
+          if (s.upd) exec(s.upd, env, ctx);
+        }
+        return null;
+    }
+    throw new Error('Unbekannte Anweisung ' + s.k);
+  }
+
+  function makeRunner(program) {
+    return function run(args) {
+      const env = new Array(program.nVars);
+      program.paramVars.forEach((v, i) => { env[v.id] = args[i]; });
+      const r = execBlock(program.method.body, env, { steps: 0 });
+      return r ? r.v : undefined;
+    };
+  }
+
+  // ------------------------------------------------------------------
+  // Gesamtanalyse eines Codes
+  // ------------------------------------------------------------------
+  function analyze(lines, spec, editable) {
+    const errs = { parse: new ErrSet(), compile: new ErrSet(), format: new ErrSet() };
+    const tk = tokenize(lines);
+    const nonEmpty = [];
+    tk.lines.forEach((t, i) => { if (t.length) nonEmpty.push(i); });
+    if (!nonEmpty.length) return { empty: true, errs, logical: [] };
+    const lastLine = nonEmpty[nonEmpty.length - 1];
+    if (tk.openComment) errs.parse.add(lastLine, 'Ein Kommentar /* wird nicht geschlossen');
+
+    // logische Zeilen bilden und parsen
+    const logical = [];
+    for (const L of reflow(tk.lines)) addLogical(L, logical);
+    for (const L of logical) {
+      L.editable = editable ? L.phys.some(p => !!editable[p]) : true;
+      if (L.node.k === 'error') errs.parse.add(L.home, L.node.msg);
+      if (L.node.missingBrace) errs.parse.add(L.home, '„{“ fehlt am Zeilenende');
+    }
+
+    // Schreibweise: genau eine Anweisung bzw. Klammer pro Zeile
+    const perPhys = new Map();
+    for (const L of logical) for (const p of L.phys) {
+      if (!perPhys.has(p)) perPhys.set(p, []);
+      perPhys.get(p).push(L);
+    }
+    for (const L of logical) {
+      if (L.phys.length > 1) for (const p of L.phys) errs.format.add(p, 'Eine Anweisung bzw. Klammer ist auf mehrere Zeilen verteilt');
+      if (L.node.inline) errs.format.add(L.home, 'Die geschweiften Klammern fehlen');
+    }
+    for (const [p, arr] of perPhys) if (arr.length > 1) errs.format.add(p, 'In dieser Zeile steht mehr als eine Anweisung bzw. Klammer');
+
+    // Blockstruktur
+    const st = buildStructure(logical, errs.parse, lastLine, nonEmpty[0], lines);
+    if (!st.structural) checkIndent(logical, lines, perPhys, errs.format, editable);
+
+    // Übersetzen
+    let program = null;
+    if (!errs.parse.size && !st.structural && st.method) {
+      const c = compileMethod(st.method, spec, errs.compile);
+      if (!errs.compile.size) {
+        flowMethod(st.method, c.paramVars, errs.compile);
+        if (!errs.compile.size) program = { method: st.method, nVars: c.nVars, paramVars: c.paramVars };
+      }
+    }
+    return { empty: false, errs, logical, method: st.method, program };
+  }
+
+  // ------------------------------------------------------------------
+  // Aufgaben vorbereiten, testen, Fehler lokalisieren
+  // ------------------------------------------------------------------
+  function argValue(v, ty) {
+    if (ty === 'char') return typeof v === 'string' ? v.charCodeAt(0) : v;
+    return v;
+  }
+
+  function same(a, b, ty) {
+    if (a === b) return true;
+    if (ty === 'double' && typeof a === 'number' && typeof b === 'number') {
+      if (Number.isNaN(a) && Number.isNaN(b)) return true;
+      return Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+    }
+    return false;
+  }
+
+  function prepareTask(task) {
+    const spec = task.method;
+    const variants = task.solutions.map(src => ({ src, a: analyze(src.split('\n'), spec) }));
+    const ref = variants[0].a;
+    if (!ref.program) throw new Error('Referenzlösung lässt sich nicht übersetzen: ' + task.id);
+    const run = makeRunner(ref.program);
+    const args = [], expected = [];
+    for (const row of task.tests) {
+      const a = row.map((v, i) => argValue(v, spec.params[i].ty));
+      try { expected.push(run(a)); args.push(a); } catch (e) { if (!e || !e.javaException) throw e; }
+    }
+    return { spec, variants, args, expected };
+  }
+
+  function passesAll(program, prep) {
+    const run = makeRunner(program);
+    for (let i = 0; i < prep.args.length; i++) {
+      let r;
+      try { r = run(prep.args[i]); } catch (e) { if (e && e.javaException) return false; throw e; }
+      if (!same(r, prep.expected[i], prep.spec.ret)) return false;
+    }
+    return true;
+  }
+
+  function declNames(a) {
+    const out = [];
+    for (const L of a.logical) {
+      const n = L.node;
+      if (!n) continue;
+      if (n.k === 'decl') n.decls.forEach(d => out.push(d.name));
+      else if (n.k === 'for' && n.init && n.init.k === 'decl') n.init.decls.forEach(d => out.push(d.name));
+    }
+    return out;
+  }
+
+  function renameMap(va, sa) {
+    const m = new Map();
+    if (va.method && sa.method && va.method.params.length === sa.method.params.length) {
+      va.method.params.forEach((p, i) => { if (p.name !== sa.method.params[i].name) m.set(p.name, sa.method.params[i].name); });
+    }
+    const vd = declNames(va), sd = declNames(sa);
+    if (vd.length === sd.length) vd.forEach((n, i) => { if (n !== sd[i]) m.set(n, sd[i]); });
+    return m;
+  }
+
+  const normToks = (L, ren) => L.toks.map(t => (t.t === 'id' && ren && ren.has(t.v)) ? ren.get(t.v) : t.raw).join(' ');
+  const uniqSorted = arr => [...new Set(arr)].sort((a, b) => a - b);
+
+  /** Versucht, die Zeile(n) mit dem Semantikfehler zu finden. Liefert null, wenn das nicht eindeutig geht. */
+  function locate(a, prep) {
+    const SL = a.logical;
+    const sNorm = SL.map(L => normToks(L, null));
+    const attempts = [];
+    for (const v of prep.variants) {
+      const VL = v.a.logical;
+      if (VL.length !== SL.length) continue;
+      const ren = renameMap(v.a, a);
+      const vNorm = VL.map(L => normToks(L, ren));
+      const D = [];
+      let bad = false;
+      for (let i = 0; i < SL.length; i++) {
+        if (vNorm[i] !== sNorm[i]) {
+          if (!SL[i].editable) { bad = true; break; }
+          D.push(i);
+        }
+      }
+      if (!bad && D.length) attempts.push({ D, vNorm });
+    }
+    attempts.sort((x, y) => x.D.length - y.D.length);
+    const ok = arr => { const c = analyze(arr, prep.spec); return !!c.program && passesAll(c.program, prep); };
+
+    for (const at of attempts) {
+      const fixes = at.D.filter(i => ok(sNorm.map((s, j) => (j === i ? at.vNorm[i] : s))));
+      if (fixes.length) return uniqSorted(fixes.map(i => SL[i].home));
+    }
+    const dels = [];
+    for (let i = 0; i < SL.length; i++) {
+      if (!SL[i].editable || SL[i].node.k === 'close') continue;
+      if (ok(sNorm.filter((_, j) => j !== i))) dels.push(i);
+    }
+    if (dels.length) return uniqSorted(dels.map(i => SL[i].home));
+    for (const at of attempts) {
+      if (at.D.length > 6) continue;
+      for (let x = 0; x < at.D.length; x++) {
+        for (let y = x + 1; y < at.D.length; y++) {
+          const i = at.D[x], j = at.D[y];
+          if (ok(sNorm.map((s, k) => (k === i ? at.vNorm[i] : k === j ? at.vNorm[j] : s)))) return uniqSorted([SL[i].home, SL[j].home]);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Bewertet einen Schülercode.
+   * lines: Array der Zeilen (Strings), editable: Array<boolean> (welche Zeilen der Schüler bearbeitet)
+   */
+  function evaluate(prep, lines, editable) {
+    const a = analyze(lines, prep.spec, editable);
+    if (a.empty) return { empty: true, solved: false };
+    const syntax = new Map();
+    for (const es of [a.errs.parse, a.errs.compile, a.errs.format]) {
+      for (const [ln, msgs] of es.map) {
+        if (!syntax.has(ln)) syntax.set(ln, []);
+        for (const m of msgs) if (!syntax.get(ln).includes(m)) syntax.get(ln).push(m);
+      }
+    }
+    let semantic = 'skipped', semLines = null;
+    if (a.program) {
+      if (passesAll(a.program, prep)) semantic = 'ok';
+      else { semantic = 'fail'; semLines = locate(a, prep); }
+    }
+    return { empty: false, syntax, semantic, semLines, solved: syntax.size === 0 && semantic === 'ok' };
+  }
+
+  /** Führt eine Methode (Java-Quelltext) mit Argumenten aus – für Lese-Aufgaben und Tests. */
+  function runSource(src, spec, args) {
+    const a = analyze(src.split('\n'), spec || null);
+    if (!a.program) {
+      const msgs = [];
+      for (const es of [a.errs.parse, a.errs.compile]) for (const [ln, m] of es.map) msgs.push('Zeile ' + (ln + 1) + ': ' + m.join('; '));
+      throw new Error('Quelltext fehlerhaft: ' + msgs.join(' | '));
+    }
+    const types = a.program.paramVars.map(v => v.ty);
+    return makeRunner(a.program)((args || []).map((v, i) => argValue(v, types[i])));
+  }
+
+  const api = { tokenize, analyze, prepareTask, evaluate, runSource, indentWidth, passesAll, makeRunner };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else global.JavaMini = api;
+})(typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>window.__IF_DATA__="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";window.__IF_KEY__="EF-if-Studientag-2026";window.__IF_T__=1970652373263993;</script>
+<script>
+/* Oberfläche der Seite „Die if-Anweisung“ */
+(function () {
+  'use strict';
+
+  const J = window.JavaMini;
+  const STORE_KEY = 'informatik-ef-if-anweisung-2026-v1';
+
+  // ------------------------------------------------------------------
+  // Hilfsfunktionen
+  // ------------------------------------------------------------------
+  function el(tag, attrs, ...children) {
+    const e = document.createElement(tag);
+    if (attrs) {
+      for (const [k, v] of Object.entries(attrs)) {
+        if (v == null || v === false) continue;
+        if (k === 'class') e.className = v;
+        else if (k === 'html') e.innerHTML = v;
+        else if (k === 'text') e.textContent = v;
+        else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+        else e.setAttribute(k, v === true ? '' : v);
+      }
+    }
+    for (const c of children) if (c != null) e.append(c);
+    return e;
+  }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function cyrb53(str, seed = 7) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+
+  function decodeData(b64, key) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+
+  const DATA = decodeData(window.__IF_DATA__, window.__IF_KEY__);
+  const TEACHER_HASH = window.__IF_T__;
+
+  // ------------------------------------------------------------------
+  // Syntaxhervorhebung (nur zur Anzeige)
+  // ------------------------------------------------------------------
+  const KW = new Set(['public', 'private', 'protected', 'static', 'void', 'if', 'else', 'for', 'while', 'return', 'new', 'class']);
+  const TY = new Set(['int', 'double', 'char', 'boolean']);
+  const LIT = new Set(['true', 'false', 'null']);
+  const TOKEN_RE = /(⟨[^⟩]*⟩)|(\/\/.*$)|("(?:\\.|[^"\\])*"?)|('(?:\\.|[^'\\])*'?)|(\d+(?:\.\d+)?)|([A-Za-z_$\u00C0-\u024F][\w$\u00C0-\u024F]*)|([\s\S])/g;
+
+  function hl(line) {
+    let out = '';
+    line.replace(TOKEN_RE, (m, ph, com, str, chr, num, word, other) => {
+      if (ph) out += '<span class="t-ph">' + esc(ph.slice(1, -1)) + '</span>';
+      else if (com) out += '<span class="t-com">' + esc(com) + '</span>';
+      else if (str || chr) out += '<span class="t-str">' + esc(m) + '</span>';
+      else if (num) out += '<span class="t-num">' + esc(num) + '</span>';
+      else if (word) {
+        if (KW.has(word)) out += '<span class="t-kw">' + word + '</span>';
+        else if (TY.has(word)) out += '<span class="t-ty">' + word + '</span>';
+        else if (LIT.has(word)) out += '<span class="t-lit">' + word + '</span>';
+        else out += esc(word);
+      } else out += esc(other);
+      return m;
+    });
+    return out;
+  }
+
+  function codeBlock(code, cls) {
+    const lines = code.split('\n');
+    return '<pre class="codeblock' + (cls ? ' ' + cls : '') + '"><code>' +
+      lines.map((l, i) => '<span class="cl"><span class="cln">' + (i + 1) + '</span><span class="clt">' + (hl(l) || ' ') + '</span></span>').join('') +
+      '</code></pre>';
+  }
+
+  function lineList(nums) {
+    const n = nums.map(x => x + 1);
+    if (n.length === 1) return 'Zeile ' + n[0];
+    return 'den Zeilen ' + n.slice(0, -1).join(', ') + ' und ' + n[n.length - 1];
+  }
+
+  // ------------------------------------------------------------------
+  // Zustand (Fortschritt im Browser)
+  // ------------------------------------------------------------------
+  const isTeacherHash = () => {
+    let h = '';
+    try { h = decodeURIComponent(location.hash.replace(/^#/, '')); } catch (e) { h = location.hash.replace(/^#/, ''); }
+    h = h.trim().toLowerCase();
+    return !!h && cyrb53(h) === TEACHER_HASH;
+  };
+  const teacher = isTeacherHash();
+  const fresh = () => ({ v: 1, solved: {}, code: {}, answers: {} });
+  let storageOk = true;
+  function loadState() {
+    if (teacher) return fresh();
+    try {
+      const s = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (s && s.v === 1 && s.solved && s.code && s.answers) return s;
+    } catch (e) { storageOk = false; }
+    return fresh();
+  }
+  const state = loadState();
+  let saveTimer = null;
+  let resetting = false;
+  function saveState(now) {
+    if (teacher || resetting) return;
+    clearTimeout(saveTimer);
+    const doSave = () => {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+      catch (e) { storageOk = false; }
+    };
+    if (now) doSave(); else saveTimer = setTimeout(doSave, 300);
+  }
+  window.addEventListener('beforeunload', () => saveState(true));
+  window.addEventListener('hashchange', () => { if (isTeacherHash() !== teacher) location.reload(); });
+
+  // ------------------------------------------------------------------
+  // Schritte
+  // ------------------------------------------------------------------
+  const steps = [
+    ...DATA.explanations.map((e, i) => ({ kind: 'explain', id: e.id, num: i + 1, data: e })),
+    ...DATA.tasks.map((t, i) => ({ kind: t.type, id: t.id, num: i + 1, data: t }))
+  ];
+  const preps = {};
+  const getPrep = t => (preps[t.id] = preps[t.id] || J.prepareTask(t));
+
+  // ------------------------------------------------------------------
+  // Zeilen-Editor
+  // ------------------------------------------------------------------
+  class Editor {
+    constructor(task, saved, onChange, onSubmit) {
+      this.sk = task.rows;
+      this.onChange = onChange;
+      this.onSubmit = onSubmit;
+      this.readOnly = false;
+      this.root = el('div', { class: 'editor', role: 'group', 'aria-label': 'Code-Editor' });
+      this.inner = el('div', { class: 'editor-in' });
+      this.root.append(this.inner);
+      this.rows = this.initRows(saved);
+      this.rows.forEach(r => this.inner.append(this.makeRow(r)));
+      this.renumber();
+    }
+
+    freshRows() {
+      return this.sk.map((r, i) => (typeof r === 'string' ? { k: 'f', i } : Array.isArray(r) ? { k: 'i', i, v: '' } : { k: 'e', v: '' }));
+    }
+
+    initRows(saved) {
+      if (!Array.isArray(saved)) return this.freshRows();
+      const refs = saved.filter(r => r && (r.k === 'f' || r.k === 'i')).map(r => r.i);
+      const expected = this.sk.map((r, i) => (r === null ? -1 : i)).filter(i => i >= 0);
+      const valid = refs.length === expected.length && refs.every((x, j) => x === expected[j]) &&
+        saved.every(r => r && (r.k === 'e' || (r.k === 'f' && typeof this.sk[r.i] === 'string') || (r.k === 'i' && Array.isArray(this.sk[r.i])))) &&
+        (this.sk.some(r => r === null) || !saved.some(r => r.k === 'e'));
+      if (!valid) return this.freshRows();
+      return saved.map(r => (r.k === 'f' ? { k: 'f', i: r.i } : { k: r.k, i: r.i, v: typeof r.v === 'string' ? r.v : '' }));
+    }
+
+    serialize() { return this.rows.map(r => (r.k === 'f' ? { k: 'f', i: r.i } : r.k === 'i' ? { k: 'i', i: r.i, v: r.v } : { k: 'e', v: r.v })); }
+    getLines() { return this.rows.map(r => (r.k === 'f' ? this.sk[r.i] : r.k === 'i' ? this.sk[r.i][0] + r.v + this.sk[r.i][1] : r.v)); }
+    getEditable() { return this.rows.map(r => r.k !== 'f'); }
+    allEmpty() { return this.rows.every(r => r.k === 'f' || r.v.trim() === ''); }
+
+    makeRow(r) {
+      const row = el('div', { class: 'erow ' + (r.k === 'f' ? 'fixed' : r.k === 'i' ? 'inline' : 'edit') });
+      r.lnEl = el('span', { class: 'eln' });
+      r.markEl = el('span', { class: 'emark', 'aria-hidden': 'true' });
+      row.append(r.lnEl, r.markEl);
+      r.input = null;
+      if (r.k === 'f') {
+        row.append(el('span', { class: 'esrc', html: hl(this.sk[r.i]) || ' ' }));
+      } else {
+        const inp = el('input', { type: 'text', class: r.k === 'i' ? 'einline' : 'eline', spellcheck: 'false', autocomplete: 'off', autocapitalize: 'off', autocorrect: 'off' });
+        inp.value = r.v;
+        inp.readOnly = this.readOnly;
+        r.input = inp;
+        if (r.k === 'i') {
+          const [pre, post] = this.sk[r.i];
+          row.append(el('span', { class: 'esrc', html: hl(pre) }), inp, el('span', { class: 'esrc', html: hl(post) }));
+          this.autosize(inp);
+        } else {
+          row.append(inp);
+        }
+        inp.addEventListener('input', () => this.changed(r));
+        inp.addEventListener('keydown', e => this.onKey(r, e));
+        inp.addEventListener('paste', e => this.onPaste(r, e));
+      }
+      r.el = row;
+      return row;
+    }
+
+    autosize(inp) { inp.style.width = Math.max(10, inp.value.length + 2) + 'ch'; }
+
+    renumber() {
+      this.rows.forEach((r, i) => {
+        r.lnEl.textContent = String(i + 1);
+        if (r.input) r.input.setAttribute('aria-label', 'Zeile ' + (i + 1));
+      });
+    }
+
+    changed(r) {
+      if (r.input) {
+        r.v = r.input.value;
+        if (r.k === 'i') this.autosize(r.input);
+      }
+      this.unmark(r);
+      if (this.onChange) this.onChange();
+    }
+
+    insertAfter(idx, nr) {
+      this.rows.splice(idx + 1, 0, nr);
+      const node = this.makeRow(nr);
+      this.rows[idx].el.after(node);
+      this.renumber();
+      if (this.onChange) this.onChange();
+      return nr;
+    }
+
+    remove(idx) {
+      const r = this.rows[idx];
+      r.el.remove();
+      this.rows.splice(idx, 1);
+      this.renumber();
+      if (this.onChange) this.onChange();
+    }
+
+    focusRow(r, pos) {
+      if (!r || !r.input) return;
+      r.input.focus();
+      const len = r.input.value.length;
+      const p = pos === 'end' ? len : Math.max(0, Math.min(pos, len));
+      try { r.input.setSelectionRange(p, p); } catch (e) { /* ignorieren */ }
+    }
+
+    nextInput(idx) { for (let i = idx + 1; i < this.rows.length; i++) if (this.rows[i].input) return this.rows[i]; return null; }
+    prevInput(idx) { for (let i = idx - 1; i >= 0; i--) if (this.rows[i].input) return this.rows[i]; return null; }
+
+    onKey(r, e) {
+      if (this.readOnly) return;
+      const inp = r.input;
+      const idx = this.rows.indexOf(r);
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (this.onSubmit) this.onSubmit(); return; }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        const target = e.key === 'ArrowUp' ? this.prevInput(idx) : this.nextInput(idx);
+        if (target) { e.preventDefault(); this.focusRow(target, inp.selectionStart); }
+        return;
+      }
+      if (r.k === 'i') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const nx = this.nextInput(idx);
+          if (nx) this.focusRow(nx, 'end'); else if (this.onSubmit) this.onSubmit();
+        }
+        return;
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          const v = inp.value;
+          let n = 0;
+          while (n < 4 && v[n] === ' ') n++;
+          if (n === 0 && v[0] === '\t') n = 1;
+          if (n) {
+            const a = Math.max(0, inp.selectionStart - n), b = Math.max(0, inp.selectionEnd - n);
+            inp.value = v.slice(n);
+            inp.setSelectionRange(a, b);
+          }
+        } else {
+          inp.setRangeText('    ', inp.selectionStart, inp.selectionEnd, 'end');
+        }
+        this.changed(r);
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const v = inp.value, a = inp.selectionStart, b = inp.selectionEnd;
+        const before = v.slice(0, a), after = v.slice(b);
+        const next = this.rows[idx + 1];
+        if (after === '' && next && next.k === 'e' && next.v === '') {
+          if (before !== v) { inp.value = before; this.changed(r); }
+          this.focusRow(next, 0);
+          return;
+        }
+        inp.value = before;
+        this.changed(r);
+        const nr = this.insertAfter(idx, { k: 'e', v: after });
+        this.focusRow(nr, 0);
+        return;
+      }
+      if (e.key === 'Backspace' && inp.selectionStart === 0 && inp.selectionEnd === 0) {
+        const prev = this.rows[idx - 1];
+        if (!prev || prev.k !== 'e') return;
+        e.preventDefault();
+        const pos = prev.v.length;
+        if (r.v !== '') { prev.input.value = prev.v + r.v; this.changed(prev); }
+        this.remove(idx);
+        this.focusRow(prev, pos);
+        return;
+      }
+      if (e.key === 'Delete' && inp.selectionStart === inp.value.length && inp.selectionEnd === inp.value.length) {
+        const next = this.rows[idx + 1];
+        if (!next || next.k !== 'e') return;
+        e.preventDefault();
+        const pos = r.v.length;
+        if (next.v !== '') { inp.value = r.v + next.v; this.changed(r); }
+        this.remove(idx + 1);
+        this.focusRow(r, pos);
+      }
+    }
+
+    onPaste(r, e) {
+      if (this.readOnly) return;
+      const cd = e.clipboardData || window.clipboardData;
+      const text = cd ? cd.getData('text') : '';
+      if (!text) return;
+      const norm = text.replace(/\r\n?/g, '\n').replace(/\t/g, '    ');
+      const inp = r.input;
+      if (r.k === 'i' || !norm.includes('\n')) {
+        if (norm === text && !norm.includes('\n')) return;
+        e.preventDefault();
+        inp.setRangeText(norm.replace(/\n+/g, ' '), inp.selectionStart, inp.selectionEnd, 'end');
+        this.changed(r);
+        return;
+      }
+      e.preventDefault();
+      const parts = norm.split('\n');
+      if (parts.length > 1 && parts[parts.length - 1] === '') parts.pop();
+      const a = inp.selectionStart, b = inp.selectionEnd;
+      const before = inp.value.slice(0, a), after = inp.value.slice(b);
+      inp.value = before + parts[0];
+      this.changed(r);
+      let idx = this.rows.indexOf(r), last = r;
+      for (let k = 1; k < parts.length; k++) {
+        const next = this.rows[idx + 1];
+        if (next && next.k === 'e' && next.v === '') { next.input.value = parts[k]; this.changed(next); last = next; }
+        else last = this.insertAfter(idx, { k: 'e', v: parts[k] });
+        idx++;
+      }
+      if (after) { last.input.value = last.v + after; this.changed(last); }
+      this.focusRow(last, last.input.value.length - after.length);
+    }
+
+    unmark(r) {
+      r.el.classList.remove('err-syn', 'err-sem');
+      r.markEl.textContent = '';
+      r.el.removeAttribute('title');
+    }
+    clearMarks() { this.rows.forEach(r => this.unmark(r)); }
+    mark(idxs, kind, details) {
+      for (const i of idxs) {
+        const r = this.rows[i];
+        if (!r) continue;
+        r.el.classList.add(kind === 'syntax' ? 'err-syn' : 'err-sem');
+        r.markEl.textContent = '✗';
+        const label = [];
+        if (r.el.classList.contains('err-syn')) label.push('Syntaxfehler');
+        if (r.el.classList.contains('err-sem')) label.push('Semantikfehler');
+        let title = label.join(' und ');
+        if (details && details.get(i)) title += ': ' + details.get(i).join('; ');
+        r.el.title = title;
+      }
+    }
+
+    setReadOnly(ro) {
+      this.readOnly = ro;
+      this.root.classList.toggle('readonly', ro);
+      this.rows.forEach(r => { if (r.input) r.input.readOnly = ro; });
+    }
+
+    fill(lines) {
+      // Musterlösung einsetzen (Zeilen passen 1:1 zum Raster)
+      this.rows.forEach(r => r.el.remove());
+      this.rows = this.sk.map((r, i) => {
+        if (typeof r === 'string') return { k: 'f', i };
+        const line = lines[i] || '';
+        if (Array.isArray(r)) return { k: 'i', i, v: line.slice(r[0].length, line.length - r[1].length) };
+        return { k: 'e', v: line };
+      });
+      this.rows.forEach(r => this.inner.append(this.makeRow(r)));
+      this.renumber();
+      if (this.onChange) this.onChange();
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Fragen (Kontrollfragen und Lese-Aufgaben)
+  // ------------------------------------------------------------------
+  function checkAnswer(q, v) {
+    if (v == null) return false;
+    if (q.type === 'choice') return v === q.answer;
+    const s = String(v).trim().replace(/\s+/g, '');
+    if (!s) return false;
+    if (q.type === 'int') return /^[+-]?\d+$/.test(s) && Number(s) === q.answer;
+    if (q.type === 'double') {
+      const t = s.replace(',', '.');
+      return /^[+-]?(\d+\.?\d*|\.\d+)$/.test(t) && Math.abs(Number(t) - q.answer) < 1e-9;
+    }
+    if (q.type === 'char') return s.replace(/^'(.)'$/, '$1') === q.answer;
+    if (q.type === 'boolean') return ['true', 'wahr'].includes(s.toLowerCase()) === q.answer && ['true', 'false', 'wahr', 'falsch'].includes(s.toLowerCase());
+    return false;
+  }
+
+  function buildQuestions(s, groups, title) {
+    const wrap = el('div', { class: 'quiz' });
+    if (title) wrap.append(el('h4', { class: 'quiz-title', text: title }));
+    const items = [];
+    const saved = state.answers[s.id] || {};
+    let qi = 0;
+    for (const g of groups) {
+      const grp = el('div', { class: 'qgroup' });
+      if (g.label) grp.append(el('div', { class: 'qlabel', text: g.label }));
+      if (g.intro) grp.append(el('div', { class: 'prose', html: g.intro }));
+      if (g.code) grp.insertAdjacentHTML('beforeend', codeBlock(g.code));
+      for (const q of g.questions) {
+        const idx = qi++;
+        const id = s.id + '-q' + idx;
+        const row = el('div', { class: 'q' + (q.type === 'choice' ? ' q-choice' : '') });
+        let get, inputs;
+        if (q.type === 'choice') {
+          row.append(el('div', { class: 'q-prompt', html: q.prompt }));
+          const opts = el('div', { class: 'choices', role: 'radiogroup' });
+          q.options.forEach((o, oi) => {
+            const rid = id + '-o' + oi;
+            const radio = el('input', { type: 'radio', name: id, id: rid, value: String(oi) });
+            if (saved[idx] === oi) radio.checked = true;
+            opts.append(el('label', { class: 'choice', for: rid }, radio, el('code', { text: o })));
+          });
+          row.append(opts);
+          get = () => { const r = row.querySelector('input:checked'); return r ? Number(r.value) : null; };
+          inputs = () => [...row.querySelectorAll('input')];
+          row.addEventListener('change', () => { row.classList.remove('ok', 'bad'); });
+        } else {
+          const inp = el('input', { type: 'text', class: 'answer', id, autocomplete: 'off', spellcheck: 'false' });
+          if (saved[idx] != null) inp.value = saved[idx];
+          inp.addEventListener('input', () => row.classList.remove('ok', 'bad'));
+          inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); btn.click(); } });
+          row.append(el('label', { class: 'q-prompt', for: id, html: q.prompt }), el('span', { class: 'q-arrow', 'aria-hidden': 'true', text: '→' }), inp);
+          get = () => inp.value;
+          inputs = () => [inp];
+        }
+        row.append(el('span', { class: 'q-state', 'aria-hidden': 'true' }));
+        grp.append(row);
+        items.push({ q, idx, row, get, inputs });
+      }
+      wrap.append(grp);
+    }
+    const fb = el('div', { class: 'feedback', role: 'status', 'aria-live': 'polite' });
+    const btn = el('button', { class: 'btn primary', type: 'button', text: 'Antworten prüfen' });
+    const actions = el('div', { class: 'actions' }, btn);
+    wrap.append(actions, fb);
+    if (teacher) {
+      const sol = el('div', { class: 'teacher-sol', hidden: true });
+      sol.innerHTML = '<p><strong>Lösungen:</strong> ' + items.map((it, n) => {
+        const a = it.q.type === 'choice' ? '<code>' + esc(it.q.options[it.q.answer]) + '</code>' : '<code>' + esc(it.q.type === 'double' ? String(it.q.answer).replace(/^(\d+)$/, '$1.0') : it.q.answer) + '</code>';
+        return (n + 1) + ') ' + a;
+      }).join(' · ') + '</p>';
+      actions.append(el('button', { class: 'btn ghost', type: 'button', text: 'Lösungen anzeigen', onclick: () => { sol.hidden = !sol.hidden; } }));
+      wrap.append(sol);
+    }
+
+    btn.addEventListener('click', () => {
+      const ans = state.answers[s.id] = state.answers[s.id] || {};
+      let nOk = 0, nEmpty = 0;
+      for (const it of items) {
+        const v = it.get();
+        ans[it.idx] = v;
+        const empty = v == null || String(v).trim() === '';
+        if (empty) nEmpty++;
+        const ok = checkAnswer(it.q, v);
+        if (ok) nOk++;
+        it.row.classList.toggle('ok', ok);
+        it.row.classList.toggle('bad', !ok && !empty);
+      }
+      saveState();
+      if (nOk === items.length) {
+        solve(s, fb, 'Richtig!');
+      } else if (nEmpty === items.length) {
+        setFeedback(fb, 'info', 'Gib zuerst eine Antwort ein.');
+      } else if (items.length === 1) {
+        setFeedback(fb, 'bad', 'Das stimmt leider noch nicht. Versuche es noch einmal.');
+      } else {
+        setFeedback(fb, 'bad', 'Noch nicht ganz: ' + nOk + ' von ' + items.length + ' Antworten sind richtig.' + (nEmpty ? ' Beantworte alle Fragen.' : ' Die rot markierten stimmen noch nicht.'));
+      }
+    });
+    s.lock = ro => { btn.hidden = ro; items.forEach(it => it.inputs().forEach(i => { i.disabled = ro; })); };
+    if (state.solved[s.id]) items.forEach(it => { if (checkAnswer(it.q, it.get())) it.row.classList.add('ok'); });
+    return wrap;
+  }
+
+  function setFeedback(fb, kind, html) {
+    fb.className = 'feedback show ' + kind;
+    fb.innerHTML = html;
+  }
+
+  // ------------------------------------------------------------------
+  // Karten
+  // ------------------------------------------------------------------
+  function cardTitle(s) {
+    if (s.kind === 'explain') return { tag: 'Abschnitt ' + s.num, title: s.data.title, chip: null };
+    return { tag: 'Aufgabe ' + s.num, title: s.data.title, chip: s.data.label };
+  }
+
+  function createCard(s) {
+    const t = cardTitle(s);
+    const root = el('article', { class: 'card', id: 'schritt-' + s.id });
+    const head = el('header', { class: 'card-head' },
+      el('span', { class: 'card-tag', text: t.tag }),
+      el('h3', { class: 'card-title', text: t.title }),
+      t.chip ? el('span', { class: 'chip ' + (s.kind === 'read' ? 'chip-read' : 'chip-code'), text: t.chip }) : null,
+      el('span', { class: 'card-status' }));
+    const body = el('div', { class: 'card-body' });
+    root.append(head, body);
+    s.card = { root, head, body, status: head.querySelector('.card-status') };
+    s.built = false;
+  }
+
+  function buildBody(s) {
+    const body = s.card.body;
+    if (s.kind === 'explain') {
+      const e = s.data;
+      for (const b of e.blocks) {
+        if (b[0] === 'html') body.append(el('div', { class: 'prose', html: b[1] }));
+        else if (b[0] === 'code') body.insertAdjacentHTML('beforeend', codeBlock(b[1]));
+        else if (b[0] === 'box') body.append(el('div', { class: 'box ' + (b[2] || ''), html: b[1] }));
+      }
+      const n = e.quiz.questions.length;
+      body.append(buildQuestions(s, [{ intro: e.quiz.intro, code: e.quiz.code, questions: e.quiz.questions }], n > 1 ? 'Kontrollfragen' : 'Kontrollfrage'));
+    } else if (s.kind === 'read') {
+      const t = s.data;
+      body.append(el('div', { class: 'prose', html: t.text }));
+      body.append(buildQuestions(s, t.parts.map(p => ({ label: p.label, code: p.code, questions: p.questions })), null));
+    } else {
+      buildCodeTask(s);
+    }
+    s.built = true;
+  }
+
+  function buildCodeTask(s) {
+    const t = s.data;
+    const body = s.card.body;
+    body.append(el('div', { class: 'prose', html: t.text }));
+    const fb = el('div', { class: 'feedback', role: 'status', 'aria-live': 'polite' });
+    const ed = new Editor(t, state.code[t.id], () => { state.code[t.id] = ed.serialize(); saveState(); fb.className = 'feedback'; }, () => check());
+    s.editor = ed;
+    const btn = el('button', { class: 'btn primary', type: 'button', text: 'Prüfen' });
+    const actions = el('div', { class: 'actions' }, btn, el('span', { class: 'hint', html: '<kbd>Strg</kbd> + <kbd>Enter</kbd> prüft ebenfalls' }));
+    body.append(ed.root, actions, fb);
+
+    if (teacher) {
+      const sol = el('div', { class: 'teacher-sol', hidden: true });
+      sol.innerHTML = '<p><strong>Musterlösung</strong> (gleichwertige Lösungen werden ebenfalls als richtig erkannt):</p>' + codeBlock(t.solutions[0]);
+      actions.append(
+        el('button', { class: 'btn ghost', type: 'button', text: 'Musterlösung anzeigen', onclick: () => { sol.hidden = !sol.hidden; } }),
+        el('button', { class: 'btn ghost', type: 'button', text: 'Musterlösung einsetzen', onclick: () => { ed.fill(t.solutions[0].split('\n')); } }));
+      body.append(sol);
+    }
+
+    function check() {
+      if (ed.readOnly) return;
+      ed.clearMarks();
+      if (ed.allEmpty()) { setFeedback(fb, 'info', 'Du hast noch nichts eingegeben.'); return; }
+      let res;
+      try { res = J.evaluate(getPrep(t), ed.getLines(), ed.getEditable()); }
+      catch (e) { console.error(e); setFeedback(fb, 'bad', 'Beim Prüfen ist ein unerwarteter Fehler aufgetreten.'); return; }
+      if (res.empty) { setFeedback(fb, 'info', 'Du hast noch nichts eingegeben.'); return; }
+      if (res.solved) { solve(s, fb, 'Richtig! Dein Code ist fehlerfrei.'); return; }
+      const syn = [...res.syntax.keys()].sort((a, b) => a - b);
+      const sem = res.semantic === 'fail' ? (res.semLines || []) : [];
+      ed.mark(syn, 'syntax', teacher ? res.syntax : null);
+      ed.mark(sem, 'semantic', null);
+      const parts = [];
+      if (syn.length) parts.push('<strong>Syntaxfehler</strong> in ' + lineList(syn) + '.');
+      if (res.semantic === 'fail') {
+        if (sem.length) parts.push('<strong>Semantikfehler</strong> in ' + lineList(sem) + '.');
+        else parts.push('<strong>Semantikfehler:</strong> Dein Code liefert nicht für alle Eingaben das richtige Ergebnis. Die Stelle lässt sich keiner einzelnen Zeile zuordnen.');
+      }
+      let html = '<span class="fb-icon" aria-hidden="true">✗</span> ' + parts.join(' ');
+      if (res.semantic === 'skipped') html += '<br><span class="fb-note">Ob dein Code das Richtige tut, wird geprüft, sobald er keine Syntaxfehler mehr enthält.</span>';
+      if (teacher && syn.length) {
+        html += '<details class="fb-details"><summary>Details (nur im Lehrermodus sichtbar)</summary><ul>' +
+          syn.map(l => '<li>Zeile ' + (l + 1) + ': ' + esc(res.syntax.get(l).join('; ')) + '</li>').join('') + '</ul></details>';
+      }
+      setFeedback(fb, 'bad', html);
+    }
+    btn.addEventListener('click', check);
+    s.lock = ro => { btn.hidden = ro; ed.setReadOnly(ro); };
+  }
+
+  // ------------------------------------------------------------------
+  // Freischalten, Fortschritt
+  // ------------------------------------------------------------------
+  const ui = {};
+
+  function solve(s, fb, msg) {
+    const wasSolved = !!state.solved[s.id];
+    state.solved[s.id] = true;
+    saveState(true);
+    const idx = steps.indexOf(s);
+    const next = steps[idx + 1];
+    let html = '<span class="fb-icon" aria-hidden="true">✓</span> ' + msg;
+    setFeedback(fb, 'ok', html);
+    refresh();
+    const allDone = steps.every(x => state.solved[x.id]);
+    const target = next ? next.card.root : (allDone ? ui.part3 : null);
+    if (target && !wasSolved) {
+      const go = el('button', { class: 'btn next', type: 'button', text: next ? (next.kind === 'explain' ? 'Weiter zum nächsten Abschnitt ↓' : (s.kind === 'explain' && next.kind !== 'explain' ? 'Weiter zu den Aufgaben ↓' : 'Weiter zur nächsten Aufgabe ↓')) : 'Weiter zur Abschlussaufgabe ↓' });
+      go.addEventListener('click', () => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      fb.append(' ', go);
+    }
+  }
+
+  function setCardState(s, mode) {
+    const c = s.card;
+    c.root.classList.remove('locked', 'active', 'solved');
+    c.root.classList.add(mode);
+    if (mode === 'locked') {
+      c.status.textContent = '🔒 gesperrt';
+      c.body.hidden = true;
+      return;
+    }
+    c.body.hidden = false;
+    if (!s.built) buildBody(s);
+    c.status.textContent = mode === 'solved' ? '✓ gelöst' : '';
+    if (s.lock) s.lock(mode === 'solved' && !teacher);
+  }
+
+  function refresh() {
+    const firstOpen = steps.findIndex(x => !state.solved[x.id]);
+    steps.forEach((x, i) => {
+      const unlocked = teacher || firstOpen === -1 || i <= firstOpen;
+      setCardState(x, unlocked ? (state.solved[x.id] ? 'solved' : 'active') : 'locked');
+    });
+    const done = steps.filter(x => state.solved[x.id]).length;
+    ui.count.textContent = done + ' / ' + steps.length;
+    ui.bar.style.width = (100 * done / steps.length) + '%';
+    ui.progress.setAttribute('aria-valuenow', String(done));
+    const firstTask = steps.findIndex(x => x.kind !== 'explain');
+    const tasksOpen = teacher || firstOpen === -1 || firstOpen >= firstTask;
+    ui.help.hidden = !tasksOpen;
+    const allDone = firstOpen === -1;
+    ui.part3.hidden = !(teacher || allDone);
+    ui.congrats.hidden = !allDone;
+  }
+
+  // ------------------------------------------------------------------
+  // Seite aufbauen
+  // ------------------------------------------------------------------
+  function buildPage() {
+    const m = DATA.meta;
+    document.title = m.docTitle;
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    ui.count = el('span', { class: 'tb-count' });
+    ui.bar = el('span', { class: 'tb-fill' });
+    ui.progress = el('div', { class: 'tb-bar', role: 'progressbar', 'aria-label': 'Fortschritt', 'aria-valuemin': '0', 'aria-valuemax': String(steps.length) }, ui.bar);
+    const topbar = el('div', { class: 'topbar' },
+      el('div', { class: 'topbar-in' },
+        el('a', { class: 'tb-title', href: '#top', text: m.h1, onclick: e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); } }),
+        teacher ? el('span', { class: 'tb-teacher', text: 'Lehrermodus' }) : null,
+        el('div', { class: 'tb-progress' }, ui.progress, ui.count)));
+
+    const hero = el('header', { class: 'hero', id: 'top' },
+      el('p', { class: 'kicker', text: m.kicker }),
+      el('h1', { text: m.h1 }),
+      el('p', { class: 'lead', text: m.lead }));
+    if (teacher) hero.append(el('p', { class: 'teacher-note', html: '<strong>Lehrermodus:</strong> Alle Abschnitte sind freigeschaltet, Musterlösungen lassen sich einblenden. Der Fortschritt wird in diesem Modus nicht gespeichert.' }));
+
+    const part1 = el('section', { class: 'part' }, el('h2', { class: 'part-title', html: '<span>Teil 1</span> Erklärungen und Kontrollfragen' }));
+    const part2 = el('section', { class: 'part' }, el('h2', { class: 'part-title', html: '<span>Teil 2</span> Übungsaufgaben' }));
+    ui.help = el('div', { class: 'box help', html: DATA.editorHelp });
+    part2.append(ui.help);
+    for (const s of steps) {
+      createCard(s);
+      (s.kind === 'explain' ? part1 : part2).append(s.card.root);
+    }
+
+    const f = DATA.finalTask;
+    ui.part3 = el('section', { class: 'part', id: 'abschluss' }, el('h2', { class: 'part-title', html: '<span>Teil 3</span> Abschlussaufgabe' }));
+    ui.congrats = el('div', { class: 'congrats', html: '<span aria-hidden="true">🎉</span> Stark! Du hast alle Aufgaben auf dieser Seite gelöst. Jetzt wartet noch eine letzte Aufgabe auf dich – diesmal in Greenfoot.' });
+    const tip = el('div', { class: 'box tip', hidden: true, html: '<p class="box-title">Tipp</p>' + f.tip });
+    const tipBtn = el('button', { class: 'btn ghost', type: 'button', text: 'Tipp anzeigen', onclick: () => { tip.hidden = !tip.hidden; tipBtn.textContent = tip.hidden ? 'Tipp anzeigen' : 'Tipp ausblenden'; } });
+    ui.part3.append(ui.congrats, el('article', { class: 'card final' },
+      el('header', { class: 'card-head' }, el('span', { class: 'card-tag', text: 'Abschluss' }), el('h3', { class: 'card-title', text: f.title })),
+      el('div', { class: 'card-body' }, el('div', { class: 'prose', html: f.html }), el('div', { class: 'actions' }, tipBtn), tip)));
+
+    const resetBtn = el('button', { class: 'btn ghost small', type: 'button', text: 'Von vorne beginnen' });
+    resetBtn.addEventListener('click', () => {
+      if (!window.confirm('Willst du wirklich von vorne beginnen? Dein gesamter Fortschritt auf dieser Seite wird gelöscht.')) return;
+      resetting = true;
+      clearTimeout(saveTimer);
+      try { localStorage.removeItem(STORE_KEY); } catch (e) { /* ignorieren */ }
+      location.reload();
+    });
+    const footer = el('footer', { class: 'footer' },
+      el('p', { text: teacher ? 'Lehrermodus: Der Fortschritt wird nicht gespeichert.' : (storageOk ? 'Dein Fortschritt wird in diesem Browser auf diesem Gerät gespeichert.' : 'Hinweis: In diesem Browser kann dein Fortschritt nicht gespeichert werden.') }),
+      teacher ? null : resetBtn);
+
+    app.append(topbar, el('main', { class: 'wrap' }, hero, part1, part2, ui.part3), footer);
+    refresh();
+    // Nach dem Neuladen direkt zum aktuellen Schritt springen
+    const firstOpen = steps.findIndex(x => !state.solved[x.id]);
+    if (!teacher && !location.hash && firstOpen > 0) {
+      requestAnimationFrame(() => steps[firstOpen].card.root.scrollIntoView({ block: 'start' }));
+    }
+  }
+
+  buildPage();
+})();
+
+</script>
+</body>
+</html>
